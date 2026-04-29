@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Firebase Setup & Hosting Guide — Project Studio Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --navy:#0f172a;--indigo:#4f46e5;--teal:#0d9488;--amber:#f59e0b;
+  --green:#10b981;--red:#ef4444;
+  --surface:#fff;--surface2:#f8fafc;--border:#e2e8f0;
+  --text:#0f172a;--text2:#475569;--text3:#94a3b8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--surface2);color:var(--text);line-height:1.7}
+.page-wrap{max-width:860px;margin:0 auto;padding:2.5rem 1.5rem 5rem}
+
+/* HERO */
+.hero{
+background:linear-gradient(135deg,var(–navy) 0%,#1e3a5f 60%,var(–navy) 100%);
+color:#fff;border-radius:24px;padding:2.5rem 2rem;margin-bottom:2.5rem;
+position:relative;overflow:hidden;
+}
+.hero::before{
+content:‘🔥’;position:absolute;right:2rem;top:50%;transform:translateY(-50%);
+font-size:5rem;opacity:.15;
+}
+.hero-label{
+font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+color:var(–teal);margin-bottom:.5rem;font-family:‘Sora’,sans-serif;
+}
+.hero h1{font-family:‘Sora’,sans-serif;font-size:1.9rem;font-weight:800;margin-bottom:.5rem;}
+.hero p{opacity:.75;font-size:.95rem;max-width:500px;}
+
+/* SECTIONS */
+.section{margin-bottom:2.5rem;}
+.section-num{
+display:inline-flex;align-items:center;justify-content:center;
+width:32px;height:32px;border-radius:50%;
+background:linear-gradient(135deg,var(–indigo),var(–teal));
+color:#fff;font-weight:800;font-size:.85rem;
+font-family:‘Sora’,sans-serif;flex-shrink:0;
+}
+.section-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem;}
+.section-title{font-family:‘Sora’,sans-serif;font-size:1.2rem;font-weight:700;color:var(–text);}
+.section-subtitle{font-size:.88rem;color:var(–text2);margin-top:.15rem;}
+
+/* CARDS */
+.card{
+background:var(–surface);border:1px solid var(–border);border-radius:16px;
+padding:1.5rem;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,.06);
+}
+.card-title{font-family:‘Sora’,sans-serif;font-weight:700;font-size:.95rem;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem;}
+
+/* STEPS */
+.steps{display:flex;flex-direction:column;gap:.6rem;}
+.step{
+display:flex;align-items:flex-start;gap:.85rem;
+background:var(–surface2);border:1px solid var(–border);
+border-radius:12px;padding:.9rem 1.1rem;
+}
+.step-n{
+width:26px;height:26px;border-radius:50%;
+background:linear-gradient(135deg,var(–indigo),var(–indigo));
+color:#fff;font-weight:700;font-size:.78rem;
+display:flex;align-items:center;justify-content:center;
+flex-shrink:0;font-family:‘Sora’,sans-serif;margin-top:.1rem;
+}
+.step-body{flex:1;}
+.step-title{font-weight:600;font-size:.9rem;color:var(–text);margin-bottom:.2rem;}
+.step-desc{font-size:.85rem;color:var(–text2);}
+.step-desc a{color:var(–indigo);text-decoration:none;}
+
+/* CODE BLOCKS */
+.code-block{
+background:var(–navy);color:#e2e8f0;
+border-radius:12px;padding:1.1rem 1.25rem;
+font-family:‘JetBrains Mono’,monospace;font-size:.82rem;line-height:1.7;
+overflow-x:auto;margin:.75rem 0;position:relative;
+}
+.code-label{
+font-size:.7rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+color:var(–text3);margin-bottom:.4rem;font-family:‘Sora’,sans-serif;
+}
+.hl-key{color:#93c5fd;}   /* blue - keys */
+.hl-str{color:#6ee7b7;}   /* green - strings */
+.hl-cmd{color:#fde68a;}   /* amber - commands */
+.hl-cmt{color:#475569;}   /* grey - comments */
+
+/* BADGES / CHIPS */
+.chip{
+display:inline-flex;align-items:center;gap:.3rem;
+padding:.2rem .65rem;border-radius:20px;font-size:.78rem;font-weight:600;
+font-family:‘Sora’,sans-serif;
+}
+.chip-free{background:rgba(16,185,129,.12);color:var(–green);}
+.chip-paid{background:rgba(245,158,11,.12);color:var(–amber);}
+.chip-warn{background:rgba(239,68,68,.1);color:var(–red);}
+
+/* COMPARISON TABLE */
+.compare-table{width:100%;border-collapse:collapse;margin-top:.75rem;}
+.compare-table th{
+padding:.6rem 1rem;text-align:left;font-size:.77rem;font-weight:700;
+letter-spacing:.05em;text-transform:uppercase;color:var(–text3);
+border-bottom:1px solid var(–border);font-family:‘Sora’,sans-serif;background:var(–surface2);
+}
+.compare-table td{
+padding:.7rem 1rem;border-bottom:1px solid var(–border);
+font-size:.88rem;color:var(–text2);
+}
+.compare-table tr:last-child td{border-bottom:none;}
+.compare-table .yes{color:var(–green);font-weight:700;}
+.compare-table .no {color:var(–red);font-weight:700;}
+
+/* ALERT */
+.alert{
+border-radius:12px;padding:1rem 1.25rem;margin:.75rem 0;
+display:flex;gap:.75rem;align-items:flex-start;font-size:.88rem;
+}
+.alert.info{background:rgba(79,70,229,.08);border:1px solid rgba(79,70,229,.2);color:var(–text);}
+.alert.warn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);color:var(–text);}
+.alert.success{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);color:var(–text);}
+.alert-icon{font-size:1.1rem;flex-shrink:0;margin-top:.05rem;}
+
+/* DOMAIN OPTIONS */
+.domain-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.85rem;margin-top:.75rem;}
+.domain-card{
+background:var(–surface2);border:1px solid var(–border);border-radius:12px;padding:1rem;
+}
+.domain-card-title{font-weight:700;font-size:.9rem;margin-bottom:.3rem;}
+.domain-card-url{font-family:‘JetBrains Mono’,monospace;font-size:.78rem;color:var(–indigo);margin-bottom:.5rem;}
+.domain-card-desc{font-size:.82rem;color:var(–text2);}
+
+/* FIRESTORE RULES */
+.rules-box{
+background:#0d1117;border-radius:12px;padding:1.25rem;
+font-family:‘JetBrains Mono’,monospace;font-size:.82rem;line-height:1.8;
+color:#c9d1d9;overflow-x:auto;
+}
+.r-kw{color:#ff7b72;}
+.r-str{color:#a5d6ff;}
+.r-cm{color:#8b949e;}
+</style>
+
+</head>
+<body>
+<div class="page-wrap">
+
+<!-- HERO -->
+
+<div class="hero">
+  <div class="hero-label">Step-by-Step Guide</div>
+  <h1>Firebase Setup & Public Hosting</h1>
+  <p>Complete guide to connect Firebase, set up authentication, Firestore database, and deploy Project Studio Pro to a public domain.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════
+  PART 1: FIREBASE PROJECT SETUP
+════════════════════════════════════════════ -->
+
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <div>
+      <div class="section-title">Create Your Firebase Project</div>
+      <div class="section-subtitle">Takes about 5 minutes. Free forever on Spark plan.</div>
+    </div>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-n">1</div>
+      <div class="step-body">
+        <div class="step-title">Go to Firebase Console</div>
+        <div class="step-desc">Open <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a> and sign in with your Google account.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">2</div>
+      <div class="step-body">
+        <div class="step-title">Create a New Project</div>
+        <div class="step-desc">Click <strong>"Add project"</strong> → Enter name e.g. <em>project-studio-pro</em> → Disable Google Analytics (optional) → Click <strong>Create project</strong>.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">3</div>
+      <div class="step-body">
+        <div class="step-title">Add a Web App</div>
+        <div class="step-desc">In your project dashboard, click the <strong>&lt;/&gt;</strong> (Web) icon → Register app with any nickname → Copy the <code>firebaseConfig</code> object shown.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">4</div>
+      <div class="step-body">
+        <div class="step-title">Paste Config into index.html</div>
+        <div class="step-desc">Find the <code>firebaseConfig</code> object in your index.html and replace the placeholder values with your actual config:</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-label">Your firebaseConfig (replace in index.html)</div>
+  <div class="code-block">
+<span class="hl-key">const</span> firebaseConfig = {<br>
+&nbsp;&nbsp;<span class="hl-key">apiKey</span>:            <span class="hl-str">"AIzaSyABCDEF1234567890abcdef"</span>,<br>
+&nbsp;&nbsp;<span class="hl-key">authDomain</span>:        <span class="hl-str">"project-studio-pro.firebaseapp.com"</span>,<br>
+&nbsp;&nbsp;<span class="hl-key">projectId</span>:         <span class="hl-str">"project-studio-pro"</span>,<br>
+&nbsp;&nbsp;<span class="hl-key">storageBucket</span>:     <span class="hl-str">"project-studio-pro.appspot.com"</span>,<br>
+&nbsp;&nbsp;<span class="hl-key">messagingSenderId</span>: <span class="hl-str">"123456789012"</span>,<br>
+&nbsp;&nbsp;<span class="hl-key">appId</span>:             <span class="hl-str">"1:123456789012:web:abcdef1234567890"</span><br>
+};
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+  PART 2: ENABLE AUTHENTICATION
+════════════════════════════════════════════ -->
+
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <div>
+      <div class="section-title">Enable Authentication</div>
+      <div class="section-subtitle">Allow users to sign in with Google or Email/Password</div>
+    </div>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-n">1</div>
+      <div class="step-body">
+        <div class="step-title">Open Authentication in Firebase Console</div>
+        <div class="step-desc">Left sidebar → <strong>Build</strong> → <strong>Authentication</strong> → Click <strong>"Get started"</strong></div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">2</div>
+      <div class="step-body">
+        <div class="step-title">Enable Email/Password</div>
+        <div class="step-desc">Sign-in providers tab → Click <strong>Email/Password</strong> → Toggle <strong>Enable</strong> → Save.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">3</div>
+      <div class="step-body">
+        <div class="step-title">Enable Google Sign-In</div>
+        <div class="step-desc">Sign-in providers tab → Click <strong>Google</strong> → Toggle <strong>Enable</strong> → Add your support email → Save.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">4</div>
+      <div class="step-body">
+        <div class="step-title">Add Authorized Domain (for production)</div>
+        <div class="step-desc">Authentication → <strong>Settings</strong> tab → Authorized domains → Add your custom domain (e.g. <em>projectstudiopro.com</em>) after hosting.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+  PART 3: FIRESTORE DATABASE
+════════════════════════════════════════════ -->
+
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <div>
+      <div class="section-title">Set Up Firestore Database</div>
+      <div class="section-subtitle">Your data structure and security rules</div>
+    </div>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-n">1</div>
+      <div class="step-body">
+        <div class="step-title">Create Firestore Database</div>
+        <div class="step-desc">Left sidebar → <strong>Firestore Database</strong> → <strong>Create database</strong> → Choose <strong>Production mode</strong> → Select region closest to your users (e.g. <em>asia-south1</em> for India) → Enable.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">2</div>
+      <div class="step-body">
+        <div class="step-title">Set Security Rules</div>
+        <div class="step-desc">Firestore → <strong>Rules</strong> tab → Replace the default rules with the rules below → Publish.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-label">Firestore Security Rules (copy-paste into Rules tab)</div>
+  <div class="rules-box">
+<span class="r-cm">// Each user can only read/write their own data</span><br>
+rules_version = <span class="r-str">'2'</span>;<br>
+service cloud.firestore {<br>
+&nbsp;&nbsp;match /databases/{database}/documents {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;match /users/{userId}/{document=**} {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;allow <span class="r-kw">read</span>, <span class="r-kw">write</span>: <span class="r-kw">if</span> request.auth != <span class="r-str">null</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;&amp; request.auth.uid == userId;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;}<br>
+}
+  </div>
+
+  <div class="alert info">
+    <div class="alert-icon">ℹ️</div>
+    <div>These rules ensure that <strong>each user can only access their own data</strong>. User A cannot see or modify User B's projects or notes. This is exactly what you need for a multi-user SaaS app.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📂 Your Firestore Data Structure</div>
+    <div class="code-block">
+users/ (collection)<br>
+&nbsp;&nbsp;{userId}/ (document — one per user)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;projects/ (sub-collection)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{projectId}: { name, branches[], createdAt }<br>
+&nbsp;&nbsp;&nbsp;&nbsp;notes/ (sub-collection)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{noteId}: { projectId, project, branch, text, date, createdAt }
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+  PART 4: DEPLOY TO FIREBASE HOSTING (FREE)
+════════════════════════════════════════════ -->
+
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <div>
+      <div class="section-title">Deploy to Firebase Hosting <span class="chip chip-free">Free</span></div>
+      <div class="section-subtitle">Your app live at yourproject.web.app in minutes</div>
+    </div>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-n">1</div>
+      <div class="step-body">
+        <div class="step-title">Install Node.js</div>
+        <div class="step-desc">Download from <a href="https://nodejs.org" target="_blank">nodejs.org</a> and install (LTS version). This gives you the <code>npm</code> command.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">2</div>
+      <div class="step-body">
+        <div class="step-title">Install Firebase CLI</div>
+        <div class="step-desc">Open your terminal / command prompt and run:</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block"><span class="hl-cmd">npm install -g firebase-tools</span></div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-n">3</div>
+      <div class="step-body">
+        <div class="step-title">Login to Firebase</div>
+      </div>
+    </div>
+  </div>
+  <div class="code-block"><span class="hl-cmd">firebase login</span><br><span class="hl-cmt"># A browser window opens — sign in with your Google account</span></div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-n">4</div>
+      <div class="step-body">
+        <div class="step-title">Set Up Your Project Folder</div>
+        <div class="step-desc">Create a folder called <code>project-studio</code> and put your <code>index.html</code>, <code>manifest.json</code>, and <code>sw.js</code> inside a <code>public</code> sub-folder.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+<span class="hl-cmt"># Your folder structure should look like this:</span><br>
+project-studio/<br>
+&nbsp;&nbsp;public/<br>
+&nbsp;&nbsp;&nbsp;&nbsp;index.html &nbsp;&nbsp;&nbsp;<span class="hl-cmt"># your main app file</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;manifest.json<br>
+&nbsp;&nbsp;&nbsp;&nbsp;sw.js<br>
+&nbsp;&nbsp;firebase.json &nbsp;<span class="hl-cmt"># created by firebase init (next step)</span>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-n">5</div>
+      <div class="step-body">
+        <div class="step-title">Initialize Firebase Hosting</div>
+        <div class="step-desc">Inside your <code>project-studio</code> folder, run:</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+<span class="hl-cmd">firebase init hosting</span><br><br>
+<span class="hl-cmt"># Answer the questions like this:</span><br>
+<span class="hl-cmt"># ? Use an existing project → Select your project</span><br>
+<span class="hl-cmt"># ? Public directory → public</span><br>
+<span class="hl-cmt"># ? Single-page app? → No</span><br>
+<span class="hl-cmt"># ? Overwrite index.html? → No</span>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-n">6</div>
+      <div class="step-body">
+        <div class="step-title">Deploy!</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+<span class="hl-cmd">firebase deploy</span><br><br>
+<span class="hl-cmt"># You'll see something like:</span><br>
+✔  Deploy complete!<br>
+Project Console: https://console.firebase.google.com/...<br>
+Hosting URL: <span class="hl-str">https://project-studio-pro.web.app</span>
+  </div>
+
+  <div class="alert success">
+    <div class="alert-icon">✅</div>
+    <div>Your app is now live at <strong>https://your-project-id.web.app</strong> — this is a real public URL anyone can open. Free SSL (HTTPS) is included automatically.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+  PART 5: CUSTOM DOMAIN
+════════════════════════════════════════════ -->
+
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <div>
+      <div class="section-title">Add a Custom Domain</div>
+      <div class="section-subtitle">Replace .web.app with your own brand domain</div>
+    </div>
+  </div>
+
+  <div class="domain-grid">
+    <div class="domain-card">
+      <div class="domain-card-title">Free (Firebase)</div>
+      <div class="domain-card-url">yourapp.web.app</div>
+      <div class="domain-card-desc">Works immediately after deploy. Good for testing and early launch.</div>
+    </div>
+    <div class="domain-card">
+      <div class="domain-card-title">Budget Domain (~₹800/yr)</div>
+      <div class="domain-card-url">yourapp.in / .site</div>
+      <div class="domain-card-desc">Buy from GoDaddy or Hostinger. Connect to Firebase Hosting for free.</div>
+    </div>
+    <div class="domain-card">
+      <div class="domain-card-title">Pro Domain (~₹1,200/yr)</div>
+      <div class="domain-card-url">yourapp.com</div>
+      <div class="domain-card-desc">Most trusted for SaaS. Buy from Namecheap, GoDaddy, or Google Domains.</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:1rem">
+    <div class="card-title">🔗 How to Connect Your Domain to Firebase</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">1</div>
+        <div class="step-body">
+          <div class="step-title">Open Firebase Hosting → Add custom domain</div>
+          <div class="step-desc">Firebase Console → Hosting → <strong>Add custom domain</strong> → Enter your domain (e.g. projectstudiopro.com)</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <div class="step-body">
+          <div class="step-title">Verify ownership</div>
+          <div class="step-desc">Firebase gives you a TXT record. Add it to your domain registrar's DNS settings (GoDaddy / Namecheap dashboard).</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">3</div>
+        <div class="step-body">
+          <div class="step-title">Add A records</div>
+          <div class="step-desc">Firebase provides two IP addresses. Add them as A records in your DNS. Takes 10 minutes to 48 hours to propagate.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">4</div>
+        <div class="step-body">
+          <div class="step-title">Done — HTTPS is automatic</div>
+          <div class="step-desc">Firebase auto-provisions an SSL certificate. Your domain will work with https:// for free.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+  PART 6: FREE TIER SUMMARY
+════════════════════════════════════════════ -->
+
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">6</div>
+    <div>
+      <div class="section-title">Firebase Free Tier — What You Get</div>
+      <div class="section-subtitle">Spark plan is free forever, no credit card required</div>
+    </div>
+  </div>
+  <div class="card">
+    <table class="compare-table">
+      <thead><tr><th>Service</th><th>Free Limit</th><th>Enough for you?</th></tr></thead>
+      <tbody>
+        <tr><td>Firestore Storage</td><td>1 GB</td><td class="yes">✓ ~1 million notes</td></tr>
+        <tr><td>Firestore Reads/day</td><td>50,000</td><td class="yes">✓ ~500 active users</td></tr>
+        <tr><td>Firestore Writes/day</td><td>20,000</td><td class="yes">✓ ~1,000 saves/day</td></tr>
+        <tr><td>Auth Users</td><td>Unlimited</td><td class="yes">✓ Yes</td></tr>
+        <tr><td>Hosting Storage</td><td>10 GB</td><td class="yes">✓ Your app is &lt;1 MB</td></tr>
+        <tr><td>Hosting Transfer/day</td><td>1 GB/day</td><td class="yes">✓ ~5,000 page loads/day</td></tr>
+        <tr><td>Custom Domain</td><td>Free</td><td class="yes">✓ Yes (bring your own)</td></tr>
+        <tr><td>SSL Certificate</td><td>Free</td><td class="yes">✓ Auto-managed</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="alert warn">
+    <div class="alert-icon">⚠️</div>
+    <div><strong>Upgrade to Blaze (Pay-as-you-go) only when needed.</strong> You only pay for usage beyond the free limits. Typical cost at 1,000 daily active users is ₹400–₹800/month. Keep Blaze budget alerts set to ₹500 to avoid surprises.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+  PART 7: ALTERNATIVE HOSTING OPTIONS
+════════════════════════════════════════════ -->
+
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">7</div>
+    <div>
+      <div class="section-title">Alternative Free Hosting Options</div>
+      <div class="section-subtitle">In case you want to compare</div>
+    </div>
+  </div>
+  <div class="card">
+    <table class="compare-table">
+      <thead><tr><th>Platform</th><th>Free Tier</th><th>Custom Domain</th><th>Best For</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Firebase Hosting</strong> ⭐</td><td class="yes">✓ Yes</td><td class="yes">✓ Free SSL</td><td>Recommended — integrates with your Firebase backend</td></tr>
+        <tr><td>Netlify</td><td class="yes">✓ Yes</td><td class="yes">✓ Free SSL</td><td>Simple drag-and-drop deploy, great for beginners</td></tr>
+        <tr><td>Vercel</td><td class="yes">✓ Yes</td><td class="yes">✓ Free SSL</td><td>Fastest CDN, great developer experience</td></tr>
+        <tr><td>GitHub Pages</td><td class="yes">✓ Yes</td><td class="yes">✓ Free SSL</td><td>Good if you use GitHub, deploy from repo</td></tr>
+        <tr><td>Cloudflare Pages</td><td class="yes">✓ Yes</td><td class="yes">✓ Free SSL</td><td>Best performance globally, unlimited bandwidth</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="alert info">
+    <div class="alert-icon">💡</div>
+    <div><strong>Recommendation:</strong> Use <strong>Firebase Hosting</strong> since your database is already on Firebase. One platform, one dashboard, easy <code>firebase deploy</code> command updates both your app and backend.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+  QUICK CHECKLIST
+════════════════════════════════════════════ -->
+
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">✓</div>
+    <div>
+      <div class="section-title">Launch Checklist</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="steps">
+      <div class="step"><div class="step-n">☐</div><div class="step-body"><div class="step-title">Create Firebase project at console.firebase.google.com</div></div></div>
+      <div class="step"><div class="step-n">☐</div><div class="step-body"><div class="step-title">Paste your firebaseConfig into index.html</div></div></div>
+      <div class="step"><div class="step-n">☐</div><div class="step-body"><div class="step-title">Enable Email/Password + Google Auth</div></div></div>
+      <div class="step"><div class="step-n">☐</div><div class="step-body"><div class="step-title">Create Firestore DB in Production mode (asia-south1 region)</div></div></div>
+      <div class="step"><div class="step-n">☐</div><div class="step-body"><div class="step-title">Paste Firestore security rules and Publish</div></div></div>
+      <div class="step"><div class="step-n">☐</div><div class="step-body"><div class="step-title">Run: npm install -g firebase-tools → firebase login → firebase init → firebase deploy</div></div></div>
+      <div class="step"><div class="step-n">☐</div><div class="step-body"><div class="step-title">Test sign-up and note saving on the live URL</div></div></div>
+      <div class="step"><div class="step-n">☐</div><div class="step-body"><div class="step-title">(Optional) Buy domain and connect to Firebase Hosting</div></div></div>
+      <div class="step"><div class="step-n">☐</div><div class="step-body"><div class="step-title">(Optional) Add authorized domain in Auth settings</div></div></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end page-wrap -->
+</body>
+</html>
