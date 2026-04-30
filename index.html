@@ -2,584 +2,1465 @@
 
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Firebase Setup & Hosting Guide — Project Studio Pro</title>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Project Studio Pro</title>
+<link rel="manifest" href="manifest.json" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+
+<!-- ═══ FIREBASE SDKs (v9 compat) ═══════════════════════════════════ -->
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
 <style>
-:root{
-  --navy:#0f172a;--indigo:#4f46e5;--teal:#0d9488;--amber:#f59e0b;
-  --green:#10b981;--red:#ef4444;
-  --surface:#fff;--surface2:#f1f5f9;--border:#cbd5e1;
-  --text:#0f172a;--text2:#1e293b;--text3:#475569;
+/* ══════════════════════════════════════════════════════════════
+   CSS VARIABLES & RESET
+══════════════════════════════════════════════════════════════ */
+:root {
+  --navy:      #0f172a;
+  --navy2:     #1e293b;
+  --indigo:    #4f46e5;
+  --indigo2:   #6366f1;
+  --teal:      #0d9488;
+  --teal2:     #14b8a6;
+  --amber:     #f59e0b;
+  --surface:   #ffffff;
+  --surface2:  #f8fafc;
+  --surface3:  #f1f5f9;
+  --border:    #e2e8f0;
+  --text:      #0f172a;
+  --text2:     #475569;
+  --text3:     #94a3b8;
+  --success:   #10b981;
+  --danger:    #ef4444;
+  --radius:    12px;
+  --radius-lg: 20px;
+  --shadow:    0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.06);
+  --shadow-lg: 0 8px 32px rgba(15,23,42,.12);
+  --transition:.2s cubic-bezier(.4,0,.2,1);
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;background:var(--surface2);color:var(--text);line-height:1.7}
-.page-wrap{max-width:860px;margin:0 auto;padding:2.5rem 1.5rem 5rem}
+[data-theme="dark"] {
+  --surface:  #1e293b; --surface2: #0f172a; --surface3: #0d1526;
+  --border:   #334155; --text:     #f1f5f9; --text2:    #94a3b8;
+  --text3:    #475569;
+  --shadow:   0 1px 3px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.2);
+  --shadow-lg:0 8px 32px rgba(0,0,0,.4);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--surface2);color:var(--text);min-height:100vh;transition:background var(--transition),color var(--transition)}
 
-/* HERO */
-.hero{
-background:linear-gradient(135deg,var(–navy) 0%,#1e3a5f 60%,var(–navy) 100%);
-color:#fff;border-radius:24px;padding:2.5rem 2rem;margin-bottom:2.5rem;
-position:relative;overflow:hidden;
+/* ══════════════════════════════════════════════════════════════
+   AUTH SCREEN
+══════════════════════════════════════════════════════════════ */
+#auth-screen {
+  min-height:100vh;
+  display:flex; align-items:center; justify-content:center;
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
+  padding:1rem;
 }
-.hero::before{
-content:‘🔥’;position:absolute;right:2rem;top:50%;transform:translateY(-50%);
-font-size:5rem;opacity:.15;
+.auth-card {
+  background:var(--surface); border-radius:24px;
+  padding:2.5rem 2rem; width:100%; max-width:420px;
+  box-shadow:0 24px 64px rgba(0,0,0,.35);
+  text-align:center;
 }
-.hero-label{
-font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-color:var(–teal);margin-bottom:.5rem;font-family:‘Sora’,sans-serif;
+.auth-logo {
+  font-family:'Sora',sans-serif; font-weight:800; font-size:1.5rem;
+  color:var(--indigo); display:flex; align-items:center;
+  justify-content:center; gap:.6rem; margin-bottom:.5rem;
 }
-.hero h1{font-family:‘Sora’,sans-serif;font-size:1.9rem;font-weight:800;margin-bottom:.5rem;}
-.hero p{color:#cbd5e1;font-size:.95rem;max-width:500px;}
+.auth-logo-icon {
+  width:44px; height:44px; border-radius:14px;
+  background:linear-gradient(135deg,var(--indigo),var(--teal));
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.3rem;
+}
+.auth-tagline { color:var(--text2); font-size:.9rem; margin-bottom:2rem; }
+.auth-divider {
+  display:flex; align-items:center; gap:1rem; margin:1.5rem 0;
+  color:var(--text3); font-size:.82rem;
+}
+.auth-divider::before,.auth-divider::after {
+  content:''; flex:1; height:1px; background:var(--border);
+}
+.auth-input {
+  width:100%; padding:.7rem 1rem; border-radius:10px;
+  border:1.5px solid var(--border); background:var(--surface2);
+  color:var(--text); font-family:'DM Sans',sans-serif;
+  font-size:.93rem; margin-bottom:.7rem;
+  transition:border-color var(--transition);
+}
+.auth-input:focus { outline:none; border-color:var(--indigo); }
+.google-btn {
+  width:100%; padding:.75rem 1rem; border-radius:12px;
+  border:1.5px solid var(--border); background:var(--surface);
+  color:var(--text); font-family:'DM Sans',sans-serif;
+  font-weight:600; font-size:.93rem; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; gap:.65rem;
+  transition:all var(--transition); margin-bottom:.7rem;
+}
+.google-btn:hover { background:var(--surface3); transform:translateY(-1px); box-shadow:var(--shadow); }
+.google-icon { font-size:1.1rem; }
+.auth-btn {
+  width:100%; padding:.75rem; border-radius:12px; border:none;
+  background:linear-gradient(135deg,var(--indigo),var(--indigo2));
+  color:#fff; font-family:'Sora',sans-serif; font-weight:700;
+  font-size:.93rem; cursor:pointer; margin-bottom:.7rem;
+  transition:all var(--transition);
+  box-shadow:0 2px 10px rgba(79,70,229,.35);
+}
+.auth-btn:hover { transform:translateY(-1px); box-shadow:0 4px 18px rgba(79,70,229,.45); }
+.auth-btn:disabled { opacity:.6; cursor:not-allowed; transform:none; }
+.auth-switch {
+  font-size:.85rem; color:var(--text2); margin-top:1rem;
+}
+.auth-switch a { color:var(--indigo); cursor:pointer; font-weight:600; text-decoration:none; }
+.auth-error {
+  background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.3);
+  color:var(--danger); border-radius:9px; padding:.6rem .9rem;
+  font-size:.85rem; margin-bottom:.7rem; display:none;
+}
 
-/* SECTIONS */
-.section{margin-bottom:2.5rem;}
-.section-num{
-display:inline-flex;align-items:center;justify-content:center;
-width:32px;height:32px;border-radius:50%;
-background:linear-gradient(135deg,var(–indigo),var(–teal));
-color:#fff;font-weight:800;font-size:.85rem;
-font-family:‘Sora’,sans-serif;flex-shrink:0;
+/* ══════════════════════════════════════════════════════════════
+   LOADING OVERLAY
+══════════════════════════════════════════════════════════════ */
+#loading-screen {
+  position:fixed; inset:0; z-index:999;
+  background:var(--navy2); display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:1rem;
+  color:#fff; font-family:'Sora',sans-serif;
 }
-.section-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem;}
-.section-title{font-family:‘Sora’,sans-serif;font-size:1.2rem;font-weight:700;color:var(–text);}
-.section-subtitle{font-size:.88rem;color:#334155;margin-top:.15rem;font-weight:500;}
+.loader {
+  width:40px; height:40px; border-radius:50%;
+  border:3px solid rgba(255,255,255,.15);
+  border-top-color:var(--teal);
+  animation:spin .8s linear infinite;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+.loader-text { font-size:.9rem; opacity:.7; }
 
-/* CARDS */
-.card{
-background:var(–surface);border:1px solid var(–border);border-radius:16px;
-padding:1.5rem;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,.06);
-}
-.card-title{font-family:‘Sora’,sans-serif;font-weight:700;font-size:.95rem;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem;}
+/* ══════════════════════════════════════════════════════════════
+   APP (hidden until authed)
+══════════════════════════════════════════════════════════════ */
+#app { display:none; }
 
-/* STEPS */
-.steps{display:flex;flex-direction:column;gap:.6rem;}
-.step{
-display:flex;align-items:flex-start;gap:.85rem;
-background:#fff;border:1px solid #cbd5e1;
-border-radius:12px;padding:.9rem 1.1rem;
+/* ── TOP NAV ─────────────────────────── */
+.topbar {
+  position:sticky; top:0; z-index:100;
+  background:var(--surface); border-bottom:1px solid var(--border);
+  box-shadow:var(--shadow); padding:0 1.5rem; height:62px;
+  display:flex; align-items:center; gap:1rem;
+  transition:background var(--transition);
 }
-.step-n{
-width:26px;height:26px;border-radius:50%;
-background:linear-gradient(135deg,var(–indigo),var(–indigo));
-color:#fff;font-weight:700;font-size:.78rem;
-display:flex;align-items:center;justify-content:center;
-flex-shrink:0;font-family:‘Sora’,sans-serif;margin-top:.1rem;
+.logo {
+  font-family:'Sora',sans-serif; font-weight:800; font-size:1.1rem;
+  color:var(--indigo); display:flex; align-items:center; gap:.5rem;
+  text-decoration:none; flex-shrink:0;
 }
-.step-body{flex:1;}
-.step-title{font-weight:600;font-size:.9rem;color:var(–text);margin-bottom:.2rem;}
-.step-desc{font-size:.88rem;color:#1e293b;line-height:1.6;}
-.step-desc a{color:var(–indigo);text-decoration:none;font-weight:600;}
-.step-desc code, .step-body code {
-background:#dbeafe;color:#1e40af;padding:.1rem .4rem;border-radius:5px;
-font-family:‘JetBrains Mono’,monospace;font-size:.82rem;font-weight:500;
+.logo-icon {
+  width:34px; height:34px; border-radius:10px;
+  background:linear-gradient(135deg,var(--indigo),var(--teal));
+  display:flex; align-items:center; justify-content:center;
+  font-size:.9rem; color:#fff;
 }
+.nav-tabs { display:flex; gap:.25rem; margin-left:.5rem; overflow-x:auto; scrollbar-width:none; }
+.nav-tabs::-webkit-scrollbar { display:none; }
+.nav-tab {
+  padding:.45rem .9rem; border-radius:8px;
+  font-family:'DM Sans',sans-serif; font-weight:500; font-size:.88rem;
+  color:var(--text2); cursor:pointer; border:none; background:transparent; white-space:nowrap;
+  transition:background var(--transition),color var(--transition);
+}
+.nav-tab:hover { background:var(--surface3); color:var(--text); }
+.nav-tab.active { background:linear-gradient(135deg,rgba(79,70,229,.12),rgba(13,148,136,.08)); color:var(--indigo); }
+.spacer { flex:1; }
+.topbar-actions { display:flex; align-items:center; gap:.6rem; }
+.btn-icon {
+  width:36px; height:36px; border-radius:9px; border:1px solid var(--border);
+  background:var(--surface2); display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:.95rem; transition:all var(--transition);
+}
+.btn-icon:hover { background:var(--surface3); transform:translateY(-1px); }
+.btn-primary {
+  padding:.45rem 1rem; border-radius:9px;
+  background:linear-gradient(135deg,var(--indigo),var(--indigo2));
+  color:#fff; font-family:'DM Sans',sans-serif; font-weight:600; font-size:.88rem;
+  border:none; cursor:pointer; display:flex; align-items:center; gap:.4rem;
+  transition:all var(--transition); box-shadow:0 2px 8px rgba(79,70,229,.3);
+}
+.btn-primary:hover { transform:translateY(-1px); box-shadow:0 4px 16px rgba(79,70,229,.4); }
+.btn-teal { background:linear-gradient(135deg,var(--teal),var(--teal2)); box-shadow:0 2px 8px rgba(13,148,136,.3); }
+.btn-teal:hover { box-shadow:0 4px 16px rgba(13,148,136,.4); }
 
-/* CODE BLOCKS */
-.code-block{
-background:var(–navy);color:#e2e8f0;
-border-radius:12px;padding:1.1rem 1.25rem;
-font-family:‘JetBrains Mono’,monospace;font-size:.82rem;line-height:1.7;
-overflow-x:auto;margin:.75rem 0;position:relative;
+/* user avatar dropdown */
+.avatar-wrap { position:relative; }
+.avatar {
+  width:34px; height:34px; border-radius:50%;
+  background:linear-gradient(135deg,var(--amber),#fb923c);
+  color:#fff; font-weight:700; font-size:.78rem;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-family:'Sora',sans-serif; flex-shrink:0;
+  border:2px solid var(--border);
 }
-.code-label{
-font-size:.72rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
-color:#1e293b;margin-bottom:.4rem;font-family:‘Sora’,sans-serif;
-background:#e2e8f0;display:inline-block;padding:.2rem .6rem;border-radius:5px;
+.avatar-menu {
+  position:absolute; top:calc(100% + .5rem); right:0;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:12px; box-shadow:var(--shadow-lg);
+  min-width:200px; padding:.5rem;
+  display:none; z-index:200;
 }
-.hl-key{color:#93c5fd;}   /* blue - keys */
-.hl-str{color:#6ee7b7;}   /* green - strings */
-.hl-cmd{color:#fde68a;}   /* amber - commands */
-.hl-cmt{color:#94a3b8;}   /* light grey - comments, visible on dark bg */
+.avatar-menu.open { display:block; }
+.avatar-menu-name {
+  padding:.5rem .75rem; font-weight:600; font-size:.88rem;
+  color:var(--text); border-bottom:1px solid var(--border); margin-bottom:.4rem;
+}
+.avatar-menu-email { font-size:.78rem; color:var(--text2); font-weight:400; }
+.avatar-menu-item {
+  padding:.55rem .75rem; border-radius:8px; cursor:pointer;
+  font-size:.88rem; color:var(--text2); transition:background var(--transition);
+  display:flex; align-items:center; gap:.5rem;
+}
+.avatar-menu-item:hover { background:var(--surface3); color:var(--text); }
+.avatar-menu-item.danger { color:var(--danger); }
+.avatar-menu-item.danger:hover { background:rgba(239,68,68,.1); }
 
-/* BADGES / CHIPS */
-.chip{
-display:inline-flex;align-items:center;gap:.3rem;
-padding:.2rem .65rem;border-radius:20px;font-size:.78rem;font-weight:600;
-font-family:‘Sora’,sans-serif;
+/* ── SYNC STATUS ─────────────────────── */
+.sync-status {
+  display:flex; align-items:center; gap:.35rem;
+  font-size:.78rem; color:var(--text3); flex-shrink:0;
 }
-.chip-free{background:rgba(16,185,129,.12);color:var(–green);}
-.chip-paid{background:rgba(245,158,11,.12);color:var(–amber);}
-.chip-warn{background:rgba(239,68,68,.1);color:var(–red);}
+.sync-dot {
+  width:7px; height:7px; border-radius:50%;
+  background:var(--success);
+}
+.sync-dot.saving { background:var(--amber); animation:pulse .8s ease infinite; }
+.sync-dot.error  { background:var(--danger); }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
 
-/* COMPARISON TABLE */
-.compare-table{width:100%;border-collapse:collapse;margin-top:.75rem;}
-.compare-table th{
-padding:.6rem 1rem;text-align:left;font-size:.77rem;font-weight:700;
-letter-spacing:.05em;text-transform:uppercase;color:#1e293b;
-border-bottom:2px solid var(–border);font-family:‘Sora’,sans-serif;background:#e2e8f0;
-}
-.compare-table td{
-padding:.7rem 1rem;border-bottom:1px solid var(–border);
-font-size:.88rem;color:#1e293b;
-}
-.compare-table tr:last-child td{border-bottom:none;}
-.compare-table .yes{color:var(–green);font-weight:700;}
-.compare-table .no {color:var(–red);font-weight:700;}
+/* ── LAYOUT ──────────────────────────── */
+.layout { display:flex; min-height:calc(100vh - 62px); }
 
-/* ALERT */
-.alert{
-border-radius:12px;padding:1rem 1.25rem;margin:.75rem 0;
-display:flex;gap:.75rem;align-items:flex-start;font-size:.88rem;
+/* ── SIDEBAR ─────────────────────────── */
+.sidebar {
+  width:240px; flex-shrink:0; background:var(--surface);
+  border-right:1px solid var(--border); padding:1.25rem .75rem;
+  display:flex; flex-direction:column; gap:.25rem;
+  transition:background var(--transition);
 }
-.alert.info{background:rgba(79,70,229,.08);border:1px solid rgba(79,70,229,.2);color:var(–text);}
-.alert.warn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);color:var(–text);}
-.alert.success{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);color:var(–text);}
-.alert-icon{font-size:1.1rem;flex-shrink:0;margin-top:.05rem;}
+.sidebar-section-label {
+  font-size:.72rem; font-weight:600; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--text3);
+  padding:.75rem .75rem .35rem; font-family:'Sora',sans-serif;
+}
+.sidebar-item {
+  display:flex; align-items:center; gap:.65rem;
+  padding:.6rem .75rem; border-radius:9px; color:var(--text2);
+  font-weight:500; font-size:.9rem; cursor:pointer; border:none;
+  background:transparent; width:100%; text-align:left;
+  transition:all var(--transition);
+}
+.sidebar-item:hover { background:var(--surface3); color:var(--text); }
+.sidebar-item.active {
+  background:linear-gradient(135deg,rgba(79,70,229,.12),rgba(13,148,136,.06));
+  color:var(--indigo); font-weight:600;
+}
+.sidebar-item .icon { font-size:1.05rem; width:20px; text-align:center; flex-shrink:0; }
+.sidebar-item .count {
+  margin-left:auto; background:var(--surface3); color:var(--text3);
+  font-size:.72rem; font-weight:600; padding:.1rem .45rem;
+  border-radius:20px; font-family:'Sora',sans-serif;
+}
+.sidebar-item.active .count { background:rgba(79,70,229,.15); color:var(--indigo); }
+.sidebar-divider { height:1px; background:var(--border); margin:.5rem 0; }
+.sidebar-footer {
+  margin-top:auto; padding:.75rem; border-radius:12px;
+  background:linear-gradient(135deg,rgba(79,70,229,.07),rgba(13,148,136,.05));
+  border:1px solid var(--border);
+}
+.sidebar-footer-label { font-size:.8rem; color:var(--text2); font-weight:500; margin-bottom:.5rem; }
+.upgrade-btn {
+  display:block; width:100%; padding:.5rem; border-radius:8px; text-align:center;
+  background:linear-gradient(135deg,var(--indigo),var(--teal));
+  color:#fff; font-weight:600; font-size:.82rem; border:none; cursor:pointer;
+  font-family:'Sora',sans-serif; transition:opacity var(--transition);
+}
+.upgrade-btn:hover { opacity:.88; }
 
-/* DOMAIN OPTIONS */
-.domain-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.85rem;margin-top:.75rem;}
-.domain-card{
-background:#fff;border:1px solid #cbd5e1;border-radius:12px;padding:1rem;
-}
-.domain-card-title{font-weight:700;font-size:.9rem;margin-bottom:.3rem;}
-.domain-card-url{font-family:‘JetBrains Mono’,monospace;font-size:.78rem;color:var(–indigo);margin-bottom:.5rem;}
-.domain-card-desc{font-size:.84rem;color:#1e293b;}
+/* ── MAIN ────────────────────────────── */
+.main { flex:1; padding:1.75rem; overflow-y:auto; min-width:0; }
 
-/* FIRESTORE RULES */
-.rules-box{
-background:#0d1117;border-radius:12px;padding:1.25rem;
-font-family:‘JetBrains Mono’,monospace;font-size:.82rem;line-height:1.8;
-color:#c9d1d9;overflow-x:auto;
+/* ── PAGE HEADER ─────────────────────── */
+.page-header { display:flex; align-items:flex-start; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap; }
+.page-header-text { flex:1; min-width:0; }
+.page-title { font-family:'Sora',sans-serif; font-size:1.55rem; font-weight:800; color:var(--text); line-height:1.2; }
+.page-subtitle { color:var(--text2); font-size:.9rem; margin-top:.25rem; }
+.page-actions { display:flex; gap:.6rem; align-items:center; flex-wrap:wrap; }
+
+/* ── SELECTOR STRIP ──────────────────── */
+.selector-strip {
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg);
+  padding:1.25rem 1.5rem; margin-bottom:1.25rem;
+  display:flex; gap:1.25rem; align-items:flex-end; flex-wrap:wrap;
+  box-shadow:var(--shadow);
 }
-.r-kw{color:#ff7b72;}
-.r-str{color:#a5d6ff;}
-.r-cm{color:#8b949e;font-style:italic;}
+.field-group { flex:1; min-width:160px; }
+.field-label {
+  display:block; font-size:.78rem; font-weight:600; color:var(--text2);
+  margin-bottom:.4rem; font-family:'Sora',sans-serif; letter-spacing:.03em;
+}
+.field-select {
+  width:100%; padding:.58rem .85rem; border-radius:9px; border:1.5px solid var(--border);
+  background:var(--surface2); color:var(--text); font-family:'DM Sans',sans-serif;
+  font-size:.9rem; appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3E%3Cpath fill='%2394a3b8' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right .6rem center; padding-right:2rem;
+  transition:border-color var(--transition),box-shadow var(--transition); cursor:pointer;
+}
+.field-select:focus { outline:none; border-color:var(--indigo); box-shadow:0 0 0 3px rgba(79,70,229,.12); }
+
+/* ── NOTE EDITOR ─────────────────────── */
+.note-editor-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius-lg); overflow:hidden; margin-bottom:1.25rem;
+  box-shadow:var(--shadow);
+}
+.note-editor-toolbar {
+  padding:.75rem 1.25rem; border-bottom:1px solid var(--border);
+  display:flex; gap:.5rem; align-items:center; background:var(--surface2); flex-wrap:wrap;
+}
+.toolbar-btn {
+  padding:.3rem .6rem; border-radius:6px; border:1px solid var(--border);
+  background:var(--surface); color:var(--text2); font-size:.82rem; cursor:pointer;
+  font-family:'DM Sans',sans-serif; transition:all var(--transition);
+}
+.toolbar-btn:hover { background:var(--surface3); color:var(--text); }
+.toolbar-sep { width:1px; height:20px; background:var(--border); margin:0 .2rem; }
+.note-textarea {
+  width:100%; min-height:130px; padding:1.1rem 1.25rem; border:none;
+  background:var(--surface); color:var(--text);
+  font-family:'DM Sans',sans-serif; font-size:.95rem; line-height:1.65; resize:vertical;
+}
+.note-textarea:focus { outline:none; }
+.note-textarea::placeholder { color:var(--text3); }
+.note-editor-footer {
+  padding:.75rem 1.25rem; border-top:1px solid var(--border);
+  display:flex; justify-content:space-between; align-items:center;
+  background:var(--surface2); flex-wrap:wrap; gap:.5rem;
+}
+.char-count { font-size:.8rem; color:var(--text3); }
+.save-actions { display:flex; gap:.6rem; }
+
+/* ── STATS ROW ───────────────────────── */
+.stats-row {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+  gap:.9rem; margin-bottom:1.25rem;
+}
+.stat-card {
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  padding:1rem 1.1rem; box-shadow:var(--shadow); transition:transform var(--transition);
+}
+.stat-card:hover { transform:translateY(-2px); }
+.stat-label { font-size:.78rem; color:var(--text2); font-weight:500; margin-bottom:.25rem; }
+.stat-value { font-family:'Sora',sans-serif; font-size:1.6rem; font-weight:800; color:var(--text); }
+.stat-value.indigo { color:var(--indigo); }
+.stat-value.teal   { color:var(--teal); }
+.stat-value.amber  { color:var(--amber); }
+
+/* ── MANAGE GRID ─────────────────────── */
+.manage-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1.1rem; margin-bottom:1.25rem; }
+.manage-card {
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg);
+  box-shadow:var(--shadow); overflow:hidden;
+  transition:box-shadow var(--transition),transform var(--transition);
+}
+.manage-card:hover { box-shadow:var(--shadow-lg); transform:translateY(-2px); }
+.manage-card-header {
+  padding:1rem 1.25rem; display:flex; align-items:center; gap:.75rem;
+  border-bottom:1px solid var(--border);
+}
+.manage-card-icon {
+  width:38px; height:38px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0;
+}
+.ic-indigo { background:rgba(79,70,229,.12); }
+.ic-teal   { background:rgba(13,148,136,.12); }
+.ic-amber  { background:rgba(245,158,11,.12); }
+.manage-card-title { font-family:'Sora',sans-serif; font-weight:700; font-size:.98rem; color:var(--text); }
+.manage-card-subtitle { font-size:.8rem; color:var(--text2); margin-top:.1rem; }
+.manage-card-body { padding:1rem 1.25rem; }
+.list-items { display:flex; flex-direction:column; gap:.5rem; }
+.list-item {
+  display:flex; align-items:center; gap:.65rem; padding:.55rem .75rem;
+  border-radius:9px; background:var(--surface2); border:1px solid var(--border);
+  cursor:pointer; transition:all var(--transition);
+}
+.list-item:hover { background:var(--surface3); }
+.list-item-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.dot-indigo { background:var(--indigo); }
+.dot-teal   { background:var(--teal); }
+.dot-amber  { background:var(--amber); }
+.list-item-text { flex:1; font-size:.88rem; font-weight:500; color:var(--text); }
+.list-item-actions { display:flex; gap:.35rem; opacity:0; transition:opacity var(--transition); }
+.list-item:hover .list-item-actions { opacity:1; }
+.item-action-btn {
+  width:24px; height:24px; border-radius:6px; border:none;
+  background:var(--surface); color:var(--text2); cursor:pointer; font-size:.75rem;
+  display:flex; align-items:center; justify-content:center; transition:all var(--transition);
+}
+.item-action-btn.del:hover { background:var(--danger); color:#fff; }
+.add-item-row { display:flex; gap:.5rem; margin-top:.75rem; }
+.add-input {
+  flex:1; padding:.52rem .8rem; border-radius:9px; border:1.5px solid var(--border);
+  background:var(--surface2); color:var(--text); font-family:'DM Sans',sans-serif;
+  font-size:.88rem; transition:border-color var(--transition);
+}
+.add-input:focus { outline:none; border-color:var(--indigo); }
+.add-btn { padding:.52rem .9rem; border-radius:9px; border:none; font-weight:600; font-size:.85rem; cursor:pointer; transition:all var(--transition); font-family:'DM Sans',sans-serif; }
+
+/* ── NOTES TABLE ─────────────────────── */
+.notes-card {
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg);
+  box-shadow:var(--shadow); overflow:hidden; margin-bottom:1.25rem;
+}
+.notes-card-header {
+  padding:1rem 1.25rem; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between; gap:1rem;
+  background:var(--surface2); flex-wrap:wrap;
+}
+.notes-card-title { font-family:'Sora',sans-serif; font-weight:700; font-size:.98rem; display:flex; align-items:center; gap:.5rem; }
+.badge {
+  padding:.15rem .5rem; border-radius:20px; font-size:.72rem; font-weight:700;
+  background:rgba(79,70,229,.12); color:var(--indigo); font-family:'Sora',sans-serif;
+}
+.search-input {
+  padding:.45rem .85rem; border-radius:9px; border:1.5px solid var(--border);
+  background:var(--surface); color:var(--text); font-family:'DM Sans',sans-serif;
+  font-size:.88rem; min-width:200px; transition:border-color var(--transition);
+}
+.search-input:focus { outline:none; border-color:var(--indigo); }
+.notes-table { width:100%; border-collapse:collapse; }
+.notes-table th {
+  padding:.65rem 1.1rem; text-align:left; font-size:.77rem; font-weight:700;
+  letter-spacing:.05em; text-transform:uppercase; color:var(--text3);
+  border-bottom:1px solid var(--border); font-family:'Sora',sans-serif; background:var(--surface2);
+}
+.notes-table td {
+  padding:.75rem 1.1rem; border-bottom:1px solid var(--border);
+  font-size:.88rem; color:var(--text2); vertical-align:top;
+}
+.notes-table tr:last-child td { border-bottom:none; }
+.notes-table tr:hover td { background:var(--surface3); }
+.note-project-chip {
+  display:inline-flex; align-items:center; gap:.3rem; padding:.2rem .55rem;
+  border-radius:20px; font-size:.77rem; font-weight:600;
+  background:rgba(79,70,229,.1); color:var(--indigo); font-family:'Sora',sans-serif;
+}
+.note-branch-chip {
+  display:inline-flex; padding:.2rem .55rem; border-radius:20px;
+  font-size:.77rem; font-weight:600; background:rgba(13,148,136,.1); color:var(--teal); font-family:'Sora',sans-serif;
+}
+.note-text-cell { max-width:320px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--text); }
+.note-actions { display:flex; gap:.4rem; }
+.note-btn {
+  padding:.3rem .6rem; border-radius:7px; border:1px solid var(--border);
+  background:var(--surface); color:var(--text2); font-size:.78rem; cursor:pointer;
+  font-family:'DM Sans',sans-serif; transition:all var(--transition);
+}
+.note-btn:hover { background:var(--indigo); color:#fff; border-color:var(--indigo); }
+.note-btn.del:hover { background:var(--danger); color:#fff; border-color:var(--danger); }
+
+/* ── SYNC BANNER ─────────────────────── */
+.sync-banner {
+  background:linear-gradient(135deg,var(--navy),var(--navy2)); color:#fff;
+  border-radius:var(--radius-lg); padding:1.25rem 1.5rem;
+  display:flex; align-items:center; gap:1rem; box-shadow:var(--shadow-lg);
+  margin-bottom:1.25rem; flex-wrap:wrap;
+}
+.sync-banner-icon {
+  font-size:1.5rem; width:44px; height:44px; border-radius:12px;
+  background:rgba(255,255,255,.1); display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.sync-banner-text { flex:1; }
+.sync-banner-title { font-family:'Sora',sans-serif; font-weight:700; font-size:1rem; margin-bottom:.2rem; }
+.sync-banner-sub { font-size:.83rem; opacity:.7; }
+.sync-banner-context { flex:1; min-width:200px; }
+.sync-textarea {
+  width:100%; padding:.65rem .9rem; border-radius:10px;
+  border:1.5px solid rgba(255,255,255,.2); background:rgba(255,255,255,.08);
+  color:#fff; font-family:'DM Sans',sans-serif; font-size:.88rem;
+  resize:none; min-height:70px; transition:border-color var(--transition);
+}
+.sync-textarea:focus { outline:none; border-color:rgba(255,255,255,.5); }
+.sync-textarea::placeholder { color:rgba(255,255,255,.4); }
+.sync-btn {
+  padding:.65rem 1.2rem; border-radius:10px;
+  background:linear-gradient(135deg,var(--teal),var(--teal2));
+  color:#fff; font-weight:700; font-size:.88rem; border:none; cursor:pointer;
+  font-family:'Sora',sans-serif; box-shadow:0 2px 10px rgba(13,148,136,.4);
+  transition:all var(--transition); white-space:nowrap; align-self:flex-end;
+}
+.sync-btn:hover { transform:translateY(-1px); box-shadow:0 4px 16px rgba(13,148,136,.5); }
+
+/* ── EXPORT BAR ──────────────────────── */
+.export-bar { display:flex; gap:.6rem; align-items:center; flex-wrap:wrap; margin-bottom:1.25rem; }
+.export-btn {
+  padding:.5rem 1.1rem; border-radius:9px; font-weight:600; font-size:.85rem;
+  border:1.5px solid var(--border); background:var(--surface); color:var(--text2);
+  cursor:pointer; font-family:'DM Sans',sans-serif; display:flex; align-items:center; gap:.4rem;
+  transition:all var(--transition);
+}
+.export-btn:hover { background:var(--navy); color:#fff; border-color:var(--navy); transform:translateY(-1px); box-shadow:var(--shadow); }
+
+/* ── TOAST ───────────────────────────── */
+.toast {
+  position:fixed; bottom:1.5rem; right:1.5rem;
+  background:var(--navy); color:#fff; padding:.8rem 1.2rem; border-radius:12px;
+  font-size:.88rem; font-weight:500; box-shadow:var(--shadow-lg);
+  transform:translateY(100px); opacity:0; transition:all .3s cubic-bezier(.4,0,.2,1);
+  z-index:300; display:flex; align-items:center; gap:.5rem; max-width:320px;
+  font-family:'DM Sans',sans-serif;
+}
+.toast.show { transform:translateY(0); opacity:1; }
+.toast.success { background:var(--teal); }
+.toast.error   { background:var(--danger); }
+
+/* ── EMPTY STATE ─────────────────────── */
+.empty-state { text-align:center; padding:3rem 1rem; color:var(--text3); }
+.empty-icon  { font-size:2.5rem; margin-bottom:.75rem; }
+.empty-label { font-size:.95rem; font-weight:500; color:var(--text2); }
+.empty-sub   { font-size:.83rem; margin-top:.25rem; }
+
+/* ── PAGE VISIBILITY ─────────────────── */
+.page { display:none; }
+.page.active { display:block; }
+
+/* ── ANIMATIONS ──────────────────────── */
+@keyframes fadeInUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+.animate-in { animation:fadeInUp .35s ease both; }
+.delay-1{animation-delay:.05s} .delay-2{animation-delay:.1s}
+.delay-3{animation-delay:.15s} .delay-4{animation-delay:.2s} .delay-5{animation-delay:.25s}
+
+/* ── RESPONSIVE ──────────────────────── */
+@media(max-width:768px){
+  .sidebar{display:none} .main{padding:1rem}
+  .page-title{font-size:1.25rem} .manage-grid{grid-template-columns:1fr}
+  .stats-row{grid-template-columns:repeat(2,1fr)} .sync-banner{flex-direction:column}
+  .notes-table th:nth-child(3),.notes-table td:nth-child(3),
+  .notes-table th:nth-child(4),.notes-table td:nth-child(4){display:none}
+}
 </style>
 
 </head>
 <body>
-<div class="page-wrap">
 
-<!-- HERO -->
+<!-- ══════════════════════════════ LOADING ══════ -->
 
-<div class="hero">
-  <div class="hero-label">Step-by-Step Guide</div>
-  <h1>Firebase Setup & Public Hosting</h1>
-  <p>Complete guide to connect Firebase, set up authentication, Firestore database, and deploy Project Studio Pro to a public domain.</p>
+<div id="loading-screen">
+  <div class="loader"></div>
+  <div class="loader-text">Loading Project Studio Pro…</div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-  PART 1: FIREBASE PROJECT SETUP
-════════════════════════════════════════════ -->
+<!-- ══════════════════════════════ AUTH SCREEN ══════ -->
 
-<div class="section">
-  <div class="section-header">
-    <div class="section-num">1</div>
-    <div>
-      <div class="section-title">Create Your Firebase Project</div>
-      <div class="section-subtitle">Takes about 5 minutes. Free forever on Spark plan.</div>
+<div id="auth-screen" style="display:none">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">🗂</div>
+      Project Studio <span style="color:var(--teal);margin-left:.2rem">Pro</span>
+    </div>
+    <p class="auth-tagline">Your structured project note-taking workspace</p>
+
+```
+<!-- Google Sign-In -->
+<button class="google-btn" onclick="signInGoogle()">
+  <span class="google-icon">🔵</span> Continue with Google
+</button>
+
+<div class="auth-divider">or</div>
+
+<!-- Email/Password -->
+<div id="auth-error" class="auth-error"></div>
+<input class="auth-input" type="email" id="auth-email" placeholder="Email address" />
+<input class="auth-input" type="password" id="auth-password" placeholder="Password (min. 6 chars)" />
+<button class="auth-btn" id="auth-main-btn" onclick="signInEmail()">Sign In</button>
+<p class="auth-switch" id="auth-switch-text">
+  Don't have an account? <a onclick="toggleAuthMode()">Sign Up</a>
+</p>
+```
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════ APP ══════ -->
+
+<div id="app">
+
+<!-- TOP NAV -->
+
+<nav class="topbar">
+  <a class="logo" href="#">
+    <div class="logo-icon">🗂</div>
+    <span>Project Studio <span style="color:var(--teal)">Pro</span></span>
+  </a>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('notes',this)">✏️ Add Note</button>
+    <button class="nav-tab" onclick="showPage('reports',this)">📊 Reports</button>
+    <button class="nav-tab" onclick="showPage('manage',this)">⚙️ Manage</button>
+  </div>
+  <div class="spacer"></div>
+  <div class="topbar-actions">
+    <div class="sync-status">
+      <div class="sync-dot" id="sync-dot"></div>
+      <span id="sync-label">Synced</span>
+    </div>
+    <button class="btn-icon" onclick="toggleTheme()" id="themeBtn" title="Toggle theme">🌙</button>
+    <button class="btn-primary" onclick="exportForAI()">📥 Export AI</button>
+    <div class="avatar-wrap">
+      <div class="avatar" id="user-avatar" onclick="toggleAvatarMenu()">PS</div>
+      <div class="avatar-menu" id="avatar-menu">
+        <div class="avatar-menu-name" id="avatar-name">
+          User<div class="avatar-menu-email" id="avatar-email"></div>
+        </div>
+        <div class="avatar-menu-item" onclick="toggleTheme()">🌙 Toggle Dark Mode</div>
+        <div class="avatar-menu-item danger" onclick="signOut()">🚪 Sign Out</div>
+      </div>
     </div>
   </div>
-  <div class="steps">
-    <div class="step">
-      <div class="step-n">1</div>
-      <div class="step-body">
-        <div class="step-title">Go to Firebase Console</div>
-        <div class="step-desc">Open <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a> and sign in with your Google account.</div>
-      </div>
+</nav>
+
+<div class="layout">
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-section-label">Projects</div>
+  <button class="sidebar-item active" id="sb-all" onclick="filterSidebar('all',this)">
+    <span class="icon">📁</span> All Projects
+    <span class="count" id="count-all">0</span>
+  </button>
+  <div id="sidebar-projects-list"></div>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section-label">Views</div>
+  <button class="sidebar-item" onclick="showPage('reports',document.querySelectorAll('.nav-tab')[1])">
+    <span class="icon">📊</span> Reports
+  </button>
+  <button class="sidebar-item" onclick="showPage('manage',document.querySelectorAll('.nav-tab')[2])">
+    <span class="icon">⚙️</span> Manage
+  </button>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-footer">
+    <div class="sidebar-footer-label">🚀 Unlock Pro features</div>
+    <button class="upgrade-btn">Upgrade Plan</button>
+  </div>
+</aside>
+
+<main class="main">
+
+<!-- PAGE: ADD NOTE -->
+
+<div class="page active" id="page-notes">
+  <div class="page-header animate-in">
+    <div class="page-header-text">
+      <h1 class="page-title">Add Note</h1>
+      <p class="page-subtitle">Capture ideas, context, and updates linked to your project structure</p>
     </div>
-    <div class="step">
-      <div class="step-n">2</div>
-      <div class="step-body">
-        <div class="step-title">Create a New Project</div>
-        <div class="step-desc">Click <strong>"Add project"</strong> → Enter name e.g. <em>project-studio-pro</em> → Disable Google Analytics (optional) → Click <strong>Create project</strong>.</div>
-      </div>
+  </div>
+  <div class="stats-row animate-in delay-1">
+    <div class="stat-card"><div class="stat-label">Total Notes</div><div class="stat-value indigo" id="stat-total">0</div></div>
+    <div class="stat-card"><div class="stat-label">Projects</div><div class="stat-value teal" id="stat-projects">0</div></div>
+    <div class="stat-card"><div class="stat-label">Branches</div><div class="stat-value amber" id="stat-branches">0</div></div>
+    <div class="stat-card"><div class="stat-label">Today</div><div class="stat-value" id="stat-today">0</div></div>
+  </div>
+  <div class="selector-strip animate-in delay-2">
+    <div class="field-group">
+      <label class="field-label">Project</label>
+      <select class="field-select" id="sel-project" onchange="onProjectChange()">
+        <option value="">— Select Project —</option>
+      </select>
     </div>
-    <div class="step">
-      <div class="step-n">3</div>
-      <div class="step-body">
-        <div class="step-title">Add a Web App</div>
-        <div class="step-desc">In your project dashboard, click the <strong>&lt;/&gt;</strong> (Web) icon → Register app with any nickname → Copy the <code>firebaseConfig</code> object shown.</div>
-      </div>
+    <div class="field-group">
+      <label class="field-label">Branch</label>
+      <select class="field-select" id="sel-branch" onchange="onBranchChange()">
+        <option value="">— Select Branch —</option>
+      </select>
     </div>
-    <div class="step">
-      <div class="step-n">4</div>
-      <div class="step-body">
-        <div class="step-title">Paste Config into index.html</div>
-        <div class="step-desc">Find the <code>firebaseConfig</code> object in your index.html and replace the placeholder values with your actual config:</div>
+    <div class="field-group">
+      <label class="field-label">Sub-Branch</label>
+      <select class="field-select" id="sel-subbranch">
+        <option value="">— Select Sub-Branch —</option>
+      </select>
+    </div>
+  </div>
+  <div class="note-editor-card animate-in delay-3">
+    <div class="note-editor-toolbar">
+      <button class="toolbar-btn" onclick="wrapText('**','**')"><b>B</b></button>
+      <button class="toolbar-btn" onclick="wrapText('_','_')"><i>I</i></button>
+      <button class="toolbar-btn" onclick="wrapText('`','`')">Code</button>
+      <div class="toolbar-sep"></div>
+      <button class="toolbar-btn" onclick="insertBullet()">• List</button>
+      <button class="toolbar-btn" onclick="insertDate()">📅 Date</button>
+      <div class="toolbar-sep"></div>
+      <span style="font-size:.8rem;color:var(--text3);margin-left:auto">Context / Note</span>
+    </div>
+    <textarea class="note-textarea" id="note-text" placeholder="Write your note, context, or observation here…" oninput="updateCharCount()"></textarea>
+    <div class="note-editor-footer">
+      <span class="char-count" id="char-count">0 characters</span>
+      <div class="save-actions">
+        <button class="btn-icon" onclick="clearNote()" title="Clear">🗑</button>
+        <button class="btn-primary" onclick="saveNote()">💾 Save Note</button>
       </div>
     </div>
   </div>
+  <div class="sync-banner animate-in delay-4">
+    <div class="sync-banner-icon">🔄</div>
+    <div class="sync-banner-text">
+      <div class="sync-banner-title">Global Sync — Apply to All Branches</div>
+      <div class="sync-banner-sub">Push a context note across every branch in the selected project</div>
+    </div>
+    <div class="sync-banner-context">
+      <textarea class="sync-textarea" id="sync-text" placeholder="Enter a global context note…" rows="2"></textarea>
+    </div>
+    <button class="sync-btn" onclick="globalSync()">⚡ Apply to All</button>
+  </div>
+  <div class="notes-card animate-in delay-5">
+    <div class="notes-card-header">
+      <div class="notes-card-title">Saved Notes <span class="badge" id="table-count">0</span></div>
+      <input class="search-input" type="text" placeholder="🔍  Search notes…" oninput="searchNotes(this.value)" />
+    </div>
+    <div id="notes-table-wrap">
+      <div class="empty-state"><div class="empty-icon">📝</div><div class="empty-label">No notes yet</div><div class="empty-sub">Select a project and add your first note above</div></div>
+    </div>
+  </div>
+</div>
 
-  <div class="code-label">Your firebaseConfig (replace in index.html)</div>
-  <div class="code-block">
-<span class="hl-key">const</span> firebaseConfig = {<br>
-&nbsp;&nbsp;<span class="hl-key">apiKey</span>:            <span class="hl-str">"AIzaSyABCDEF1234567890abcdef"</span>,<br>
-&nbsp;&nbsp;<span class="hl-key">authDomain</span>:        <span class="hl-str">"project-studio-pro.firebaseapp.com"</span>,<br>
-&nbsp;&nbsp;<span class="hl-key">projectId</span>:         <span class="hl-str">"project-studio-pro"</span>,<br>
-&nbsp;&nbsp;<span class="hl-key">storageBucket</span>:     <span class="hl-str">"project-studio-pro.appspot.com"</span>,<br>
-&nbsp;&nbsp;<span class="hl-key">messagingSenderId</span>: <span class="hl-str">"123456789012"</span>,<br>
-&nbsp;&nbsp;<span class="hl-key">appId</span>:             <span class="hl-str">"1:123456789012:web:abcdef1234567890"</span><br>
+<!-- PAGE: REPORTS -->
+
+<div class="page" id="page-reports">
+  <div class="page-header animate-in">
+    <div class="page-header-text"><h1 class="page-title">Reports</h1><p class="page-subtitle">Export and analyse your project notes</p></div>
+  </div>
+  <div class="export-bar animate-in delay-1">
+    <button class="export-btn" onclick="exportForAI()">📥 Export for AI Analysis</button>
+    <button class="export-btn" onclick="exportJSON()">{ } Export JSON</button>
+    <button class="export-btn" onclick="exportCSV()">📄 Export CSV</button>
+    <button class="export-btn" onclick="exportMarkdown()">Ⓜ Export Markdown</button>
+  </div>
+  <div class="notes-card animate-in delay-2">
+    <div class="notes-card-header">
+      <div class="notes-card-title">All Notes — Full View <span class="badge" id="report-count">0</span></div>
+    </div>
+    <div id="report-table-wrap"><div class="empty-state"><div class="empty-icon">📊</div><div class="empty-label">No notes to report yet</div></div></div>
+  </div>
+</div>
+
+<!-- PAGE: MANAGE -->
+
+<div class="page" id="page-manage">
+  <div class="page-header animate-in">
+    <div class="page-header-text"><h1 class="page-title">Manage Structure</h1><p class="page-subtitle">Create and organize your projects, branches, and sub-branches</p></div>
+  </div>
+  <div class="manage-grid">
+    <div class="manage-card animate-in delay-1">
+      <div class="manage-card-header">
+        <div class="manage-card-icon ic-indigo">📁</div>
+        <div><div class="manage-card-title">Projects</div><div class="manage-card-subtitle">Top-level containers</div></div>
+      </div>
+      <div class="manage-card-body">
+        <div class="list-items" id="mgmt-projects"></div>
+        <div class="add-item-row">
+          <input class="add-input" type="text" id="new-project-input" placeholder="New project name…" onkeydown="if(event.key==='Enter')addProject()" />
+          <button class="add-btn btn-primary" onclick="addProject()">Add</button>
+        </div>
+      </div>
+    </div>
+    <div class="manage-card animate-in delay-2">
+      <div class="manage-card-header">
+        <div class="manage-card-icon ic-teal">🌿</div>
+        <div><div class="manage-card-title">Branches</div><div class="manage-card-subtitle">Sections within a project</div></div>
+      </div>
+      <div class="manage-card-body">
+        <div class="field-group" style="margin-bottom:.75rem">
+          <label class="field-label">Under Project</label>
+          <select class="field-select" id="mgmt-project-sel" onchange="renderMgmtBranches()">
+            <option value="">— Select Project —</option>
+          </select>
+        </div>
+        <div class="list-items" id="mgmt-branches"></div>
+        <div class="add-item-row">
+          <input class="add-input" type="text" id="new-branch-input" placeholder="New branch name…" onkeydown="if(event.key==='Enter')addBranch()" />
+          <button class="add-btn btn-primary" onclick="addBranch()">Add</button>
+        </div>
+      </div>
+    </div>
+    <div class="manage-card animate-in delay-3">
+      <div class="manage-card-header">
+        <div class="manage-card-icon ic-amber">🔖</div>
+        <div><div class="manage-card-title">Sub-Branches</div><div class="manage-card-subtitle">Granular topics within a branch</div></div>
+      </div>
+      <div class="manage-card-body">
+        <div class="field-group" style="margin-bottom:.6rem">
+          <label class="field-label">Under Project</label>
+          <select class="field-select" id="mgmt-sub-project-sel" onchange="renderMgmtSubBranchProjectChange()">
+            <option value="">— Select Project —</option>
+          </select>
+        </div>
+        <div class="field-group" style="margin-bottom:.75rem">
+          <label class="field-label">Under Branch</label>
+          <select class="field-select" id="mgmt-sub-branch-sel" onchange="renderMgmtSubBranches()">
+            <option value="">— Select Branch —</option>
+          </select>
+        </div>
+        <div class="list-items" id="mgmt-subbranches"></div>
+        <div class="add-item-row">
+          <input class="add-input" type="text" id="new-subbranch-input" placeholder="New sub-branch name…" onkeydown="if(event.key==='Enter')addSubBranch()" />
+          <button class="add-btn btn-primary" onclick="addSubBranch()">Add</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="notes-card animate-in delay-4">
+    <div class="notes-card-header"><div class="notes-card-title">🗂 Structure Hierarchy</div></div>
+    <div id="hierarchy-view" style="padding:1.25rem">
+      <div class="empty-state"><div class="empty-icon">🌳</div><div class="empty-label">No structure yet</div><div class="empty-sub">Add projects above to get started</div></div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+</div><!-- end #app -->
+
+<div class="toast" id="toast"></div>
+
+<!-- ════════════════════════════════════════════════════════
+  JAVASCRIPT
+════════════════════════════════════════════════════════ -->
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  🔥 FIREBASE CONFIG
+//  ⚠️  REPLACE the values below with YOUR project's config
+//  Get it from: Firebase Console → Your Project → Project Settings → Your Apps
+// ═══════════════════════════════════════════════════════════
+const firebaseConfig = {
+  apiKey:            "YOUR_API_KEY",
+  authDomain:        "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId:         "YOUR_PROJECT_ID",
+  storageBucket:     "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId:             "YOUR_APP_ID"
 };
-  </div>
-</div>
 
-<!-- ═══════════════════════════════════════════
-  PART 2: ENABLE AUTHENTICATION
-════════════════════════════════════════════ -->
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db   = firebase.firestore();
 
-<div class="section">
-  <div class="section-header">
-    <div class="section-num">2</div>
-    <div>
-      <div class="section-title">Enable Authentication</div>
-      <div class="section-subtitle">Allow users to sign in with Google or Email/Password</div>
-    </div>
-  </div>
-  <div class="steps">
-    <div class="step">
-      <div class="step-n">1</div>
-      <div class="step-body">
-        <div class="step-title">Open Authentication in Firebase Console</div>
-        <div class="step-desc">Left sidebar → <strong>Build</strong> → <strong>Authentication</strong> → Click <strong>"Get started"</strong></div>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-n">2</div>
-      <div class="step-body">
-        <div class="step-title">Enable Email/Password</div>
-        <div class="step-desc">Sign-in providers tab → Click <strong>Email/Password</strong> → Toggle <strong>Enable</strong> → Save.</div>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-n">3</div>
-      <div class="step-body">
-        <div class="step-title">Enable Google Sign-In</div>
-        <div class="step-desc">Sign-in providers tab → Click <strong>Google</strong> → Toggle <strong>Enable</strong> → Add your support email → Save.</div>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-n">4</div>
-      <div class="step-body">
-        <div class="step-title">Add Authorized Domain (for production)</div>
-        <div class="step-desc">Authentication → <strong>Settings</strong> tab → Authorized domains → Add your custom domain (e.g. <em>projectstudiopro.com</em>) after hosting.</div>
-      </div>
-    </div>
-  </div>
-</div>
+// ═══════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════
+let currentUser = null;
+let state = { projects: [], notes: [], theme: 'light' };
+let searchQuery = '';
+let authMode = 'signin'; // 'signin' | 'signup'
 
-<!-- ═══════════════════════════════════════════
-  PART 3: FIRESTORE DATABASE
-════════════════════════════════════════════ -->
+// Firestore refs (set after login)
+let projectsRef, notesRef;
 
-<div class="section">
-  <div class="section-header">
-    <div class="section-num">3</div>
-    <div>
-      <div class="section-title">Set Up Firestore Database</div>
-      <div class="section-subtitle">Your data structure and security rules</div>
-    </div>
-  </div>
-  <div class="steps">
-    <div class="step">
-      <div class="step-n">1</div>
-      <div class="step-body">
-        <div class="step-title">Create Firestore Database</div>
-        <div class="step-desc">Left sidebar → <strong>Firestore Database</strong> → <strong>Create database</strong> → Choose <strong>Production mode</strong> → Select region closest to your users (e.g. <em>asia-south1</em> for India) → Enable.</div>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-n">2</div>
-      <div class="step-body">
-        <div class="step-title">Set Security Rules</div>
-        <div class="step-desc">Firestore → <strong>Rules</strong> tab → Replace the default rules with the rules below → Publish.</div>
-      </div>
-    </div>
-  </div>
+// ═══════════════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════════════
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-  <div class="code-label">Firestore Security Rules (copy-paste into Rules tab)</div>
-  <div class="rules-box">
-<span class="r-cm">// Each user can only read/write their own data</span><br>
-rules_version = <span class="r-str">'2'</span>;<br>
-service cloud.firestore {<br>
-&nbsp;&nbsp;match /databases/{database}/documents {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;match /users/{userId}/{document=**} {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;allow <span class="r-kw">read</span>, <span class="r-kw">write</span>: <span class="r-kw">if</span> request.auth != <span class="r-str">null</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;&amp; request.auth.uid == userId;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;}<br>
-&nbsp;&nbsp;}<br>
+function toast(msg, type=''){
+  const t=document.getElementById('toast');
+  t.textContent=(type==='success'?'✅ ':type==='error'?'❌ ':'ℹ️ ')+msg;
+  t.className='toast show'+(type?' '+type:'');
+  setTimeout(()=>t.className='toast',2800);
 }
-  </div>
 
-  <div class="alert info">
-    <div class="alert-icon">ℹ️</div>
-    <div>These rules ensure that <strong>each user can only access their own data</strong>. User A cannot see or modify User B's projects or notes. This is exactly what you need for a multi-user SaaS app.</div>
-  </div>
+function setSyncStatus(status){
+  const dot=document.getElementById('sync-dot');
+  const label=document.getElementById('sync-label');
+  if(status==='saving'){ dot.className='sync-dot saving'; label.textContent='Saving…'; }
+  else if(status==='error'){ dot.className='sync-dot error'; label.textContent='Error'; }
+  else { dot.className='sync-dot'; label.textContent='Synced'; }
+}
 
-  <div class="card">
-    <div class="card-title">📂 Your Firestore Data Structure</div>
-    <div class="code-block">
-users/ (collection)<br>
-&nbsp;&nbsp;{userId}/ (document — one per user)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;projects/ (sub-collection)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{projectId}: { name, branches[], createdAt }<br>
-&nbsp;&nbsp;&nbsp;&nbsp;notes/ (sub-collection)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{noteId}: { projectId, project, branch, text, date, createdAt }
-    </div>
-  </div>
-</div>
+// ═══════════════════════════════════════════════════════════
+//  AUTH
+// ═══════════════════════════════════════════════════════════
+function toggleAuthMode(){
+  authMode = authMode==='signin'?'signup':'signin';
+  const btn=document.getElementById('auth-main-btn');
+  const sw=document.getElementById('auth-switch-text');
+  if(authMode==='signup'){
+    btn.textContent='Create Account';
+    btn.onclick=signUpEmail;
+    sw.innerHTML='Already have an account? <a onclick="toggleAuthMode()">Sign In</a>';
+  } else {
+    btn.textContent='Sign In';
+    btn.onclick=signInEmail;
+    sw.innerHTML='Don\'t have an account? <a onclick="toggleAuthMode()">Sign Up</a>';
+  }
+  document.getElementById('auth-error').style.display='none';
+}
 
-<!-- ═══════════════════════════════════════════
-  PART 4: DEPLOY TO FIREBASE HOSTING (FREE)
-════════════════════════════════════════════ -->
+function showAuthError(msg){
+  const el=document.getElementById('auth-error');
+  el.textContent=msg; el.style.display='block';
+}
 
-<div class="section">
-  <div class="section-header">
-    <div class="section-num">4</div>
-    <div>
-      <div class="section-title">Deploy to Firebase Hosting <span class="chip chip-free">Free</span></div>
-      <div class="section-subtitle">Your app live at yourproject.web.app in minutes</div>
-    </div>
-  </div>
-  <div class="steps">
-    <div class="step">
-      <div class="step-n">1</div>
-      <div class="step-body">
-        <div class="step-title">Install Node.js</div>
-        <div class="step-desc">Download from <a href="https://nodejs.org" target="_blank">nodejs.org</a> and install (LTS version). This gives you the <code>npm</code> command.</div>
+async function signInGoogle(){
+  try {
+    const provider=new firebase.auth.GoogleAuthProvider();
+    await auth.signInWithPopup(provider);
+  } catch(e){ showAuthError(e.message); }
+}
+
+async function signInEmail(){
+  const email=document.getElementById('auth-email').value.trim();
+  const pass=document.getElementById('auth-password').value;
+  if(!email||!pass){ showAuthError('Please enter email and password.'); return; }
+  try {
+    await auth.signInWithEmailAndPassword(email,pass);
+  } catch(e){ showAuthError(e.message); }
+}
+
+async function signUpEmail(){
+  const email=document.getElementById('auth-email').value.trim();
+  const pass=document.getElementById('auth-password').value;
+  if(!email||!pass){ showAuthError('Please enter email and password.'); return; }
+  if(pass.length<6){ showAuthError('Password must be at least 6 characters.'); return; }
+  try {
+    await auth.createUserWithEmailAndPassword(email,pass);
+  } catch(e){ showAuthError(e.message); }
+}
+
+async function signOut(){
+  await auth.signOut();
+  document.getElementById('avatar-menu').classList.remove('open');
+}
+
+function toggleAvatarMenu(){
+  document.getElementById('avatar-menu').classList.toggle('open');
+}
+document.addEventListener('click', e=>{
+  if(!e.target.closest('.avatar-wrap')) document.getElementById('avatar-menu').classList.remove('open');
+});
+
+// ═══════════════════════════════════════════════════════════
+//  AUTH STATE LISTENER — main entry point
+// ═══════════════════════════════════════════════════════════
+auth.onAuthStateChanged(async user => {
+  document.getElementById('loading-screen').style.display='none';
+  if(user){
+    currentUser=user;
+    // Set Firestore refs scoped to this user
+    projectsRef = db.collection('users').doc(user.uid).collection('projects');
+    notesRef    = db.collection('users').doc(user.uid).collection('notes');
+    // Show app
+    document.getElementById('auth-screen').style.display='none';
+    document.getElementById('app').style.display='block';
+    // Update avatar
+    const initials=(user.displayName||user.email||'U').slice(0,2).toUpperCase();
+    document.getElementById('user-avatar').textContent=initials;
+    document.getElementById('avatar-name').innerHTML=
+      (user.displayName||'User')+'<div class="avatar-menu-email">'+user.email+'</div>';
+    // Load theme from localStorage
+    const savedTheme=localStorage.getItem('psp_theme')||'light';
+    state.theme=savedTheme;
+    if(savedTheme==='dark'){
+      document.documentElement.setAttribute('data-theme','dark');
+      document.getElementById('themeBtn').textContent='☀️';
+    }
+    // Load data from Firestore
+    await loadFromFirestore();
+  } else {
+    currentUser=null;
+    document.getElementById('auth-screen').style.display='flex';
+    document.getElementById('app').style.display='none';
+  }
+});
+
+// ═══════════════════════════════════════════════════════════
+//  FIRESTORE — LOAD
+// ═══════════════════════════════════════════════════════════
+async function loadFromFirestore(){
+  try {
+    const [projSnap, notesSnap] = await Promise.all([
+      projectsRef.orderBy('createdAt','asc').get(),
+      notesRef.orderBy('createdAt','desc').get()
+    ]);
+    state.projects = projSnap.docs.map(d=>({id:d.id,...d.data()}));
+    state.notes    = notesSnap.docs.map(d=>({id:d.id,...d.data()}));
+    populateProjectSelects();
+    renderNotesTable();
+    updateStats();
+    setSyncStatus('synced');
+  } catch(e){
+    console.error(e);
+    toast('Could not load data: '+e.message,'error');
+    setSyncStatus('error');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  FIRESTORE — SAVE HELPERS
+// ═══════════════════════════════════════════════════════════
+async function fbSaveProject(proj){
+  setSyncStatus('saving');
+  try {
+    const {id,...data}=proj;
+    await projectsRef.doc(id).set({...data, createdAt: firebase.firestore.FieldValue.serverTimestamp()});
+    setSyncStatus('synced');
+  } catch(e){ setSyncStatus('error'); toast('Save failed: '+e.message,'error'); }
+}
+
+async function fbDeleteProject(id){
+  setSyncStatus('saving');
+  try {
+    await projectsRef.doc(id).delete();
+    setSyncStatus('synced');
+  } catch(e){ setSyncStatus('error'); }
+}
+
+async function fbSaveNote(note){
+  setSyncStatus('saving');
+  try {
+    const {id,...data}=note;
+    await notesRef.doc(id).set({...data, createdAt: firebase.firestore.FieldValue.serverTimestamp()});
+    setSyncStatus('synced');
+  } catch(e){ setSyncStatus('error'); toast('Save failed: '+e.message,'error'); }
+}
+
+async function fbDeleteNote(id){
+  setSyncStatus('saving');
+  try {
+    await notesRef.doc(id).delete();
+    setSyncStatus('synced');
+  } catch(e){ setSyncStatus('error'); }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  UI HELPERS
+// ═══════════════════════════════════════════════════════════
+function showPage(id, btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  if(id==='reports') renderReportTable();
+  if(id==='manage'){ syncManageSelects(); renderMgmtProjects(); renderHierarchy(); }
+}
+
+function toggleTheme(){
+  state.theme=state.theme==='light'?'dark':'light';
+  document.documentElement.setAttribute('data-theme',state.theme==='dark'?'dark':'');
+  document.getElementById('themeBtn').textContent=state.theme==='dark'?'☀️':'🌙';
+  localStorage.setItem('psp_theme',state.theme);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  SELECTORS
+// ═══════════════════════════════════════════════════════════
+function populateProjectSelects(){
+  ['sel-project','mgmt-project-sel','mgmt-sub-project-sel'].forEach(id=>{
+    const el=document.getElementById(id);
+    const val=el.value;
+    el.innerHTML='<option value="">— Select Project —</option>';
+    state.projects.forEach(p=>el.appendChild(new Option(p.name,p.id)));
+    el.value=val;
+  });
+}
+
+function onProjectChange(){
+  populateBranchSelect('sel-project','sel-branch');
+  document.getElementById('sel-subbranch').innerHTML='<option value="">— Select Sub-Branch —</option>';
+}
+function onBranchChange(){ populateSubBranchSelect('sel-project','sel-branch','sel-subbranch'); }
+
+function populateBranchSelect(projSel,branchSel){
+  const proj=state.projects.find(p=>p.id===document.getElementById(projSel).value);
+  const el=document.getElementById(branchSel);
+  el.innerHTML='<option value="">— Select Branch —</option>';
+  if(proj) proj.branches.forEach(b=>el.appendChild(new Option(b.name,b.id)));
+}
+
+function populateSubBranchSelect(projSel,branchSel,subSel){
+  const proj=state.projects.find(p=>p.id===document.getElementById(projSel).value);
+  const branch=proj&&proj.branches.find(b=>b.id===document.getElementById(branchSel).value);
+  const el=document.getElementById(subSel);
+  el.innerHTML='<option value="">— Select Sub-Branch —</option>';
+  if(branch) branch.subBranches.forEach(s=>el.appendChild(new Option(s.name,s.id)));
+}
+
+// ═══════════════════════════════════════════════════════════
+//  NOTES
+// ═══════════════════════════════════════════════════════════
+async function saveNote(){
+  const projId=document.getElementById('sel-project').value;
+  const branchId=document.getElementById('sel-branch').value;
+  const subId=document.getElementById('sel-subbranch').value;
+  const text=document.getElementById('note-text').value.trim();
+  if(!projId){ toast('Please select a project first.'); return; }
+  if(!text)  { toast('Note is empty!'); return; }
+  const proj=state.projects.find(p=>p.id===projId);
+  const branch=proj&&proj.branches.find(b=>b.id===branchId);
+  const sub=branch&&branch.subBranches.find(s=>s.id===subId);
+  const note={
+    id:uid(), projectId:projId, project:proj?proj.name:'',
+    branchId, branch:branch?branch.name:'',
+    subBranchId:subId, subBranch:sub?sub.name:'',
+    text,
+    date:new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})
+  };
+  state.notes.unshift(note);
+  clearNote(); renderNotesTable(); updateStats();
+  toast('Note saved!','success');
+  await fbSaveNote(note);
+}
+
+function clearNote(){ document.getElementById('note-text').value=''; updateCharCount(); }
+function updateCharCount(){
+  const n=document.getElementById('note-text').value.length;
+  document.getElementById('char-count').textContent=n+' character'+(n!==1?'s':'');
+}
+
+function wrapText(pre,post){
+  const ta=document.getElementById('note-text');
+  const s=ta.selectionStart,e=ta.selectionEnd,val=ta.value;
+  ta.value=val.slice(0,s)+pre+val.slice(s,e)+post+val.slice(e);
+  ta.focus(); ta.selectionStart=s+pre.length; ta.selectionEnd=e+pre.length; updateCharCount();
+}
+function insertBullet(){
+  const ta=document.getElementById('note-text'),s=ta.selectionStart;
+  ta.value=ta.value.slice(0,s)+'\n• '+ta.value.slice(s);
+  ta.focus(); ta.selectionStart=ta.selectionEnd=s+3; updateCharCount();
+}
+function insertDate(){
+  const ta=document.getElementById('note-text'),s=ta.selectionStart;
+  const d=new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+  ta.value=ta.value.slice(0,s)+d+' '+ta.value.slice(s);
+  ta.focus(); updateCharCount();
+}
+
+async function globalSync(){
+  const projId=document.getElementById('sel-project').value;
+  const text=document.getElementById('sync-text').value.trim();
+  if(!projId){ toast('Select a project first.'); return; }
+  if(!text)  { toast('Enter a sync note.'); return; }
+  const proj=state.projects.find(p=>p.id===projId);
+  if(!proj)  { toast('Project not found.'); return; }
+  const date=new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+  const newNotes=[];
+  proj.branches.forEach(b=>{
+    const note={id:uid(),projectId:projId,project:proj.name,branchId:b.id,branch:b.name,subBranchId:'',subBranch:'',text,date};
+    state.notes.unshift(note); newNotes.push(note);
+  });
+  document.getElementById('sync-text').value='';
+  renderNotesTable(); updateStats();
+  toast('Applied to '+newNotes.length+' branch'+(newNotes.length!==1?'es':'')+'!','success');
+  await Promise.all(newNotes.map(n=>fbSaveNote(n)));
+}
+
+async function deleteNote(id){
+  state.notes=state.notes.filter(n=>n.id!==id);
+  renderNotesTable(); renderReportTable(); updateStats();
+  toast('Note deleted.');
+  await fbDeleteNote(id);
+}
+
+function searchNotes(q){ searchQuery=q.toLowerCase(); renderNotesTable(); }
+
+function renderNotesTable(notes){
+  const list=notes||state.notes.filter(n=>
+    !searchQuery||
+    n.text.toLowerCase().includes(searchQuery)||
+    n.project.toLowerCase().includes(searchQuery)||
+    n.branch.toLowerCase().includes(searchQuery)
+  );
+  const wrap=document.getElementById('notes-table-wrap');
+  document.getElementById('table-count').textContent=list.length;
+  if(!list.length){
+    wrap.innerHTML=`<div class="empty-state"><div class="empty-icon">📝</div><div class="empty-label">${searchQuery?'No matching notes':'No notes yet'}</div><div class="empty-sub">Add your first note above</div></div>`;
+    return;
+  }
+  wrap.innerHTML=`<table class="notes-table">
+    <thead><tr><th>Project</th><th>Branch</th><th>Sub-Branch</th><th>Date</th><th>Note</th><th>Actions</th></tr></thead>
+    <tbody>${list.map(n=>`<tr>
+      <td><span class="note-project-chip">📁 ${esc(n.project)}</span></td>
+      <td><span class="note-branch-chip">${esc(n.branch)||'—'}</span></td>
+      <td style="font-size:.82rem;color:var(--text3)">${esc(n.subBranch)||'—'}</td>
+      <td style="white-space:nowrap;font-size:.82rem">${esc(n.date)}</td>
+      <td class="note-text-cell" title="${esc(n.text)}">${esc(n.text)}</td>
+      <td><div class="note-actions">
+        <button class="note-btn" onclick="copyNote('${n.id}')">📋 Copy</button>
+        <button class="note-btn del" onclick="deleteNote('${n.id}')">🗑 Delete</button>
+      </div></td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+function copyNote(id){
+  const n=state.notes.find(n=>n.id===id);
+  if(!n) return;
+  navigator.clipboard.writeText(`[${n.project}${n.branch?' > '+n.branch:''}${n.subBranch?' > '+n.subBranch:''}] ${n.text}`);
+  toast('Copied!','success');
+}
+
+function renderReportTable(){
+  const list=state.notes;
+  const badge=document.getElementById('report-count');
+  if(badge) badge.textContent=list.length;
+  const wrap=document.getElementById('report-table-wrap');
+  if(!list.length){ wrap.innerHTML=`<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-label">No notes to report yet</div></div>`; return; }
+  wrap.innerHTML=`<table class="notes-table">
+    <thead><tr><th>Project</th><th>Branch</th><th>Sub-Branch</th><th>Date</th><th>Note</th></tr></thead>
+    <tbody>${list.map(n=>`<tr>
+      <td><span class="note-project-chip">📁 ${esc(n.project)}</span></td>
+      <td><span class="note-branch-chip">${esc(n.branch)||'—'}</span></td>
+      <td style="font-size:.82rem;color:var(--text3)">${esc(n.subBranch)||'—'}</td>
+      <td style="white-space:nowrap;font-size:.82rem">${esc(n.date)}</td>
+      <td>${esc(n.text)}</td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  STATS
+// ═══════════════════════════════════════════════════════════
+function updateStats(){
+  const today=new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+  document.getElementById('stat-total').textContent=state.notes.length;
+  document.getElementById('stat-projects').textContent=state.projects.length;
+  document.getElementById('stat-branches').textContent=state.projects.reduce((a,p)=>a+p.branches.length,0);
+  document.getElementById('stat-today').textContent=state.notes.filter(n=>n.date===today).length;
+  document.getElementById('count-all').textContent=state.notes.length;
+  renderSidebarProjects();
+}
+
+function renderSidebarProjects(){
+  const wrap=document.getElementById('sidebar-projects-list');
+  wrap.innerHTML=state.projects.map(p=>{
+    const cnt=state.notes.filter(n=>n.projectId===p.id).length;
+    return `<button class="sidebar-item" onclick="filterSidebar('${p.id}',this)">
+      <span class="icon">📂</span>${esc(p.name)}
+      <span class="count">${cnt}</span>
+    </button>`;
+  }).join('');
+}
+
+function filterSidebar(id,btn){
+  document.querySelectorAll('.sidebar-item').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  const filtered=id==='all'?state.notes:state.notes.filter(n=>n.projectId===id);
+  renderNotesTable(filtered);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  MANAGE PROJECTS
+// ═══════════════════════════════════════════════════════════
+function syncManageSelects(){ populateProjectSelects(); renderMgmtBranches(); }
+
+async function addProject(){
+  const inp=document.getElementById('new-project-input');
+  const name=inp.value.trim();
+  if(!name){ toast('Enter a project name.'); return; }
+  if(state.projects.find(p=>p.name.toLowerCase()===name.toLowerCase())){ toast('Project already exists.'); return; }
+  const proj={id:uid(),name,branches:[]};
+  state.projects.push(proj); inp.value='';
+  populateProjectSelects(); renderMgmtProjects(); renderHierarchy(); updateStats();
+  toast('Project added!','success');
+  await fbSaveProject(proj);
+}
+
+async function deleteProject(id){
+  if(!confirm('Delete this project and all its data?')) return;
+  state.projects=state.projects.filter(p=>p.id!==id);
+  state.notes=state.notes.filter(n=>n.projectId!==id);
+  populateProjectSelects(); renderMgmtProjects(); renderHierarchy(); renderNotesTable(); updateStats();
+  toast('Project deleted.');
+  await fbDeleteProject(id);
+  // also delete all notes for this project from Firestore
+  const snap=await notesRef.where('projectId','==',id).get();
+  await Promise.all(snap.docs.map(d=>d.ref.delete()));
+}
+
+function renderMgmtProjects(){
+  const wrap=document.getElementById('mgmt-projects');
+  if(!state.projects.length){ wrap.innerHTML='<div style="color:var(--text3);font-size:.85rem;padding:.5rem">No projects yet</div>'; return; }
+  wrap.innerHTML=state.projects.map(p=>`
+    <div class="list-item">
+      <div class="list-item-dot dot-indigo"></div>
+      <div class="list-item-text">${esc(p.name)}</div>
+      <div class="list-item-actions">
+        <button class="item-action-btn del" onclick="deleteProject('${p.id}')" title="Delete">🗑</button>
       </div>
-    </div>
-    <div class="step">
-      <div class="step-n">2</div>
-      <div class="step-body">
-        <div class="step-title">Install Firebase CLI</div>
-        <div class="step-desc">Open your terminal / command prompt and run:</div>
+    </div>`).join('');
+}
+
+async function addBranch(){
+  const projId=document.getElementById('mgmt-project-sel').value;
+  const name=document.getElementById('new-branch-input').value.trim();
+  if(!projId){ toast('Select a project first.'); return; }
+  if(!name)  { toast('Enter a branch name.'); return; }
+  const proj=state.projects.find(p=>p.id===projId);
+  if(proj.branches.find(b=>b.name.toLowerCase()===name.toLowerCase())){ toast('Branch already exists.'); return; }
+  proj.branches.push({id:uid(),name,subBranches:[]});
+  document.getElementById('new-branch-input').value='';
+  renderMgmtBranches(); renderHierarchy(); updateStats();
+  toast('Branch added!','success');
+  await fbSaveProject(proj);
+}
+
+async function deleteBranch(projId,branchId){
+  const proj=state.projects.find(p=>p.id===projId);
+  if(!proj) return;
+  proj.branches=proj.branches.filter(b=>b.id!==branchId);
+  state.notes=state.notes.filter(n=>!(n.projectId===projId&&n.branchId===branchId));
+  renderMgmtBranches(); renderHierarchy(); renderNotesTable(); updateStats();
+  toast('Branch deleted.');
+  await fbSaveProject(proj);
+  const snap=await notesRef.where('branchId','==',branchId).get();
+  await Promise.all(snap.docs.map(d=>d.ref.delete()));
+}
+
+function renderMgmtBranches(){
+  const projId=document.getElementById('mgmt-project-sel').value;
+  const wrap=document.getElementById('mgmt-branches');
+  if(!projId){ wrap.innerHTML=''; return; }
+  const proj=state.projects.find(p=>p.id===projId);
+  if(!proj||!proj.branches.length){ wrap.innerHTML='<div style="color:var(--text3);font-size:.85rem;padding:.5rem">No branches yet</div>'; return; }
+  wrap.innerHTML=proj.branches.map(b=>`
+    <div class="list-item">
+      <div class="list-item-dot dot-teal"></div>
+      <div class="list-item-text">${esc(b.name)}</div>
+      <div class="list-item-actions">
+        <button class="item-action-btn del" onclick="deleteBranch('${projId}','${b.id}')" title="Delete">🗑</button>
       </div>
-    </div>
-  </div>
+    </div>`).join('');
+}
 
-  <div class="code-block"><span class="hl-cmd">npm install -g firebase-tools</span></div>
+function renderMgmtSubBranchProjectChange(){
+  const projId=document.getElementById('mgmt-sub-project-sel').value;
+  const branchSel=document.getElementById('mgmt-sub-branch-sel');
+  branchSel.innerHTML='<option value="">— Select Branch —</option>';
+  const proj=state.projects.find(p=>p.id===projId);
+  if(proj) proj.branches.forEach(b=>branchSel.appendChild(new Option(b.name,b.id)));
+  renderMgmtSubBranches();
+}
 
-  <div class="steps">
-    <div class="step">
-      <div class="step-n">3</div>
-      <div class="step-body">
-        <div class="step-title">Login to Firebase</div>
+async function addSubBranch(){
+  const projId=document.getElementById('mgmt-sub-project-sel').value;
+  const branchId=document.getElementById('mgmt-sub-branch-sel').value;
+  const name=document.getElementById('new-subbranch-input').value.trim();
+  if(!projId||!branchId){ toast('Select a project and branch first.'); return; }
+  if(!name){ toast('Enter a sub-branch name.'); return; }
+  const proj=state.projects.find(p=>p.id===projId);
+  const branch=proj&&proj.branches.find(b=>b.id===branchId);
+  if(!branch) return;
+  if(branch.subBranches.find(s=>s.name.toLowerCase()===name.toLowerCase())){ toast('Sub-branch already exists.'); return; }
+  branch.subBranches.push({id:uid(),name});
+  document.getElementById('new-subbranch-input').value='';
+  renderMgmtSubBranches(); renderHierarchy();
+  toast('Sub-branch added!','success');
+  await fbSaveProject(proj);
+}
+
+async function deleteSubBranch(projId,branchId,subId){
+  const proj=state.projects.find(p=>p.id===projId);
+  const branch=proj&&proj.branches.find(b=>b.id===branchId);
+  if(!branch) return;
+  branch.subBranches=branch.subBranches.filter(s=>s.id!==subId);
+  state.notes=state.notes.filter(n=>!(n.projectId===projId&&n.branchId===branchId&&n.subBranchId===subId));
+  renderMgmtSubBranches(); renderHierarchy(); renderNotesTable();
+  toast('Sub-branch deleted.');
+  await fbSaveProject(proj);
+}
+
+function renderMgmtSubBranches(){
+  const projId=document.getElementById('mgmt-sub-project-sel').value;
+  const branchId=document.getElementById('mgmt-sub-branch-sel').value;
+  const wrap=document.getElementById('mgmt-subbranches');
+  if(!projId||!branchId){ wrap.innerHTML=''; return; }
+  const proj=state.projects.find(p=>p.id===projId);
+  const branch=proj&&proj.branches.find(b=>b.id===branchId);
+  if(!branch||!branch.subBranches.length){ wrap.innerHTML='<div style="color:var(--text3);font-size:.85rem;padding:.5rem">No sub-branches yet</div>'; return; }
+  wrap.innerHTML=branch.subBranches.map(s=>`
+    <div class="list-item">
+      <div class="list-item-dot dot-amber"></div>
+      <div class="list-item-text">${esc(s.name)}</div>
+      <div class="list-item-actions">
+        <button class="item-action-btn del" onclick="deleteSubBranch('${projId}','${branchId}','${s.id}')" title="Delete">🗑</button>
       </div>
-    </div>
-  </div>
-  <div class="code-block"><span class="hl-cmd">firebase login</span><br><span class="hl-cmt"># A browser window opens — sign in with your Google account</span></div>
+    </div>`).join('');
+}
 
-  <div class="steps">
-    <div class="step">
-      <div class="step-n">4</div>
-      <div class="step-body">
-        <div class="step-title">Set Up Your Project Folder</div>
-        <div class="step-desc">Create a folder called <code>project-studio</code> and put your <code>index.html</code>, <code>manifest.json</code>, and <code>sw.js</code> inside a <code>public</code> sub-folder.</div>
+function renderHierarchy(){
+  const wrap=document.getElementById('hierarchy-view');
+  if(!state.projects.length){ wrap.innerHTML=`<div class="empty-state"><div class="empty-icon">🌳</div><div class="empty-label">No structure yet</div></div>`; return; }
+  wrap.innerHTML=state.projects.map(p=>`
+    <div style="margin-bottom:1rem">
+      <div style="display:flex;align-items:center;gap:.5rem;font-weight:700;font-family:'Sora',sans-serif;font-size:.95rem;color:var(--indigo)">
+        📁 ${esc(p.name)} <span class="badge">${p.branches.length} branch${p.branches.length!==1?'es':''}</span>
       </div>
-    </div>
-  </div>
+      ${p.branches.map(b=>`
+        <div style="margin-left:1.5rem;margin-top:.4rem">
+          <div style="font-weight:600;font-size:.88rem;color:var(--teal)">🌿 ${esc(b.name)}</div>
+          ${b.subBranches.map(s=>`<div style="margin-left:1.5rem;font-size:.83rem;color:var(--text2);padding:.2rem 0">🔖 ${esc(s.name)}</div>`).join('')}
+        </div>`).join('')}
+    </div>`).join('');
+}
 
-  <div class="code-block">
-<span class="hl-cmt"># Your folder structure should look like this:</span><br>
-project-studio/<br>
-&nbsp;&nbsp;public/<br>
-&nbsp;&nbsp;&nbsp;&nbsp;index.html &nbsp;&nbsp;&nbsp;<span class="hl-cmt"># your main app file</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;manifest.json<br>
-&nbsp;&nbsp;&nbsp;&nbsp;sw.js<br>
-&nbsp;&nbsp;firebase.json &nbsp;<span class="hl-cmt"># created by firebase init (next step)</span>
-  </div>
+// ═══════════════════════════════════════════════════════════
+//  EXPORTS
+// ═══════════════════════════════════════════════════════════
+function exportForAI(){
+  if(!state.notes.length){ toast('No notes to export.'); return; }
+  let out='# Project Studio Pro — AI Analysis Export\n';
+  out+=`Generated: ${new Date().toLocaleString('en-IN')}\nUser: ${currentUser.email}\n\n`;
+  state.projects.forEach(proj=>{
+    const notes=state.notes.filter(n=>n.projectId===proj.id);
+    if(!notes.length) return;
+    out+=`## Project: ${proj.name}\n\n`;
+    proj.branches.forEach(br=>{
+      const bNotes=notes.filter(n=>n.branchId===br.id);
+      if(!bNotes.length) return;
+      out+=`### Branch: ${br.name}\n`;
+      bNotes.forEach(n=>out+=`- [${n.date}] ${n.text}\n`);
+      out+='\n';
+    });
+    const unlinked=notes.filter(n=>!n.branchId);
+    if(unlinked.length){ out+=`### General\n`; unlinked.forEach(n=>out+=`- [${n.date}] ${n.text}\n`); out+='\n'; }
+  });
+  downloadFile('project-notes-ai.md',out,'text/markdown');
+  toast('Exported for AI!','success');
+}
+function exportJSON(){ downloadFile('project-notes.json',JSON.stringify({projects:state.projects,notes:state.notes},null,2),'application/json'); toast('JSON exported!','success'); }
+function exportCSV(){
+  const rows=[['Project','Branch','Sub-Branch','Date','Note']];
+  state.notes.forEach(n=>rows.push([n.project,n.branch||'',n.subBranch||'',n.date,'"'+n.text.replace(/"/g,'""')+'"']));
+  downloadFile('project-notes.csv',rows.map(r=>r.join(',')).join('\n'),'text/csv');
+  toast('CSV exported!','success');
+}
+function exportMarkdown(){
+  let md='# Project Notes\n\n';
+  state.notes.forEach(n=>md+=`**[${n.date}]** ${n.project}${n.branch?' > '+n.branch:''}${n.subBranch?' > '+n.subBranch:''}\n${n.text}\n\n`);
+  downloadFile('project-notes.md',md,'text/markdown');
+  toast('Markdown exported!','success');
+}
+function downloadFile(name,content,type){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([content],{type}));
+  a.download=name; a.click();
+}
+</script>
 
-  <div class="steps">
-    <div class="step">
-      <div class="step-n">5</div>
-      <div class="step-body">
-        <div class="step-title">Initialize Firebase Hosting</div>
-        <div class="step-desc">Inside your <code>project-studio</code> folder, run:</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="code-block">
-<span class="hl-cmd">firebase init hosting</span><br><br>
-<span class="hl-cmt"># Answer the questions like this:</span><br>
-<span class="hl-cmt"># ? Use an existing project → Select your project</span><br>
-<span class="hl-cmt"># ? Public directory → public</span><br>
-<span class="hl-cmt"># ? Single-page app? → No</span><br>
-<span class="hl-cmt"># ? Overwrite index.html? → No</span>
-  </div>
-
-  <div class="steps">
-    <div class="step">
-      <div class="step-n">6</div>
-      <div class="step-body">
-        <div class="step-title">Deploy!</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="code-block">
-<span class="hl-cmd">firebase deploy</span><br><br>
-<span class="hl-cmt"># You'll see something like:</span><br>
-✔  Deploy complete!<br>
-Project Console: https://console.firebase.google.com/...<br>
-Hosting URL: <span class="hl-str">https://project-studio-pro.web.app</span>
-  </div>
-
-  <div class="alert success">
-    <div class="alert-icon">✅</div>
-    <div>Your app is now live at <strong>https://your-project-id.web.app</strong> — this is a real public URL anyone can open. Free SSL (HTTPS) is included automatically.</div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════
-  PART 5: CUSTOM DOMAIN
-════════════════════════════════════════════ -->
-
-<div class="section">
-  <div class="section-header">
-    <div class="section-num">5</div>
-    <div>
-      <div class="section-title">Add a Custom Domain</div>
-      <div class="section-subtitle">Replace .web.app with your own brand domain</div>
-    </div>
-  </div>
-
-  <div class="domain-grid">
-    <div class="domain-card">
-      <div class="domain-card-title">Free (Firebase)</div>
-      <div class="domain-card-url">yourapp.web.app</div>
-      <div class="domain-card-desc">Works immediately after deploy. Good for testing and early launch.</div>
-    </div>
-    <div class="domain-card">
-      <div class="domain-card-title">Budget Domain (~₹800/yr)</div>
-      <div class="domain-card-url">yourapp.in / .site</div>
-      <div class="domain-card-desc">Buy from GoDaddy or Hostinger. Connect to Firebase Hosting for free.</div>
-    </div>
-    <div class="domain-card">
-      <div class="domain-card-title">Pro Domain (~₹1,200/yr)</div>
-      <div class="domain-card-url">yourapp.com</div>
-      <div class="domain-card-desc">Most trusted for SaaS. Buy from Namecheap, GoDaddy, or Google Domains.</div>
-    </div>
-  </div>
-
-  <div class="card" style="margin-top:1rem">
-    <div class="card-title">🔗 How to Connect Your Domain to Firebase</div>
-    <div class="steps">
-      <div class="step">
-        <div class="step-n">1</div>
-        <div class="step-body">
-          <div class="step-title">Open Firebase Hosting → Add custom domain</div>
-          <div class="step-desc">Firebase Console → Hosting → <strong>Add custom domain</strong> → Enter your domain (e.g. projectstudiopro.com)</div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-n">2</div>
-        <div class="step-body">
-          <div class="step-title">Verify ownership</div>
-          <div class="step-desc">Firebase gives you a TXT record. Add it to your domain registrar's DNS settings (GoDaddy / Namecheap dashboard).</div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-n">3</div>
-        <div class="step-body">
-          <div class="step-title">Add A records</div>
-          <div class="step-desc">Firebase provides two IP addresses. Add them as A records in your DNS. Takes 10 minutes to 48 hours to propagate.</div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-n">4</div>
-        <div class="step-body">
-          <div class="step-title">Done — HTTPS is automatic</div>
-          <div class="step-desc">Firebase auto-provisions an SSL certificate. Your domain will work with https:// for free.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════
-  PART 6: FREE TIER SUMMARY
-════════════════════════════════════════════ -->
-
-<div class="section">
-  <div class="section-header">
-    <div class="section-num">6</div>
-    <div>
-      <div class="section-title">Firebase Free Tier — What You Get</div>
-      <div class="section-subtitle">Spark plan is free forever, no credit card required</div>
-    </div>
-  </div>
-  <div class="card">
-    <table class="compare-table">
-      <thead><tr><th>Service</th><th>Free Limit</th><th>Enough for you?</th></tr></thead>
-      <tbody>
-        <tr><td>Firestore Storage</td><td>1 GB</td><td class="yes">✓ ~1 million notes</td></tr>
-        <tr><td>Firestore Reads/day</td><td>50,000</td><td class="yes">✓ ~500 active users</td></tr>
-        <tr><td>Firestore Writes/day</td><td>20,000</td><td class="yes">✓ ~1,000 saves/day</td></tr>
-        <tr><td>Auth Users</td><td>Unlimited</td><td class="yes">✓ Yes</td></tr>
-        <tr><td>Hosting Storage</td><td>10 GB</td><td class="yes">✓ Your app is &lt;1 MB</td></tr>
-        <tr><td>Hosting Transfer/day</td><td>1 GB/day</td><td class="yes">✓ ~5,000 page loads/day</td></tr>
-        <tr><td>Custom Domain</td><td>Free</td><td class="yes">✓ Yes (bring your own)</td></tr>
-        <tr><td>SSL Certificate</td><td>Free</td><td class="yes">✓ Auto-managed</td></tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="alert warn">
-    <div class="alert-icon">⚠️</div>
-    <div><strong>Upgrade to Blaze (Pay-as-you-go) only when needed.</strong> You only pay for usage beyond the free limits. Typical cost at 1,000 daily active users is ₹400–₹800/month. Keep Blaze budget alerts set to ₹500 to avoid surprises.</div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════
-  PART 7: ALTERNATIVE HOSTING OPTIONS
-════════════════════════════════════════════ -->
-
-<div class="section">
-  <div class="section-header">
-    <div class="section-num">7</div>
-    <div>
-      <div class="section-title">Alternative Free Hosting Options</div>
-      <div class="section-subtitle">In case you want to compare</div>
-    </div>
-  </div>
-  <div class="card">
-    <table class="compare-table">
-      <thead><tr><th>Platform</th><th>Free Tier</th><th>Custom Domain</th><th>Best For</th></tr></thead>
-      <tbody>
-        <tr><td><strong>Firebase Hosting</strong> ⭐</td><td class="yes">✓ Yes</td><td class="yes">✓ Free SSL</td><td>Recommended — integrates with your Firebase backend</td></tr>
-        <tr><td>Netlify</td><td class="yes">✓ Yes</td><td class="yes">✓ Free SSL</td><td>Simple drag-and-drop deploy, great for beginners</td></tr>
-        <tr><td>Vercel</td><td class="yes">✓ Yes</td><td class="yes">✓ Free SSL</td><td>Fastest CDN, great developer experience</td></tr>
-        <tr><td>GitHub Pages</td><td class="yes">✓ Yes</td><td class="yes">✓ Free SSL</td><td>Good if you use GitHub, deploy from repo</td></tr>
-        <tr><td>Cloudflare Pages</td><td class="yes">✓ Yes</td><td class="yes">✓ Free SSL</td><td>Best performance globally, unlimited bandwidth</td></tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="alert info">
-    <div class="alert-icon">💡</div>
-    <div><strong>Recommendation:</strong> Use <strong>Firebase Hosting</strong> since your database is already on Firebase. One platform, one dashboard, easy <code>firebase deploy</code> command updates both your app and backend.</div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════
-  QUICK CHECKLIST
-════════════════════════════════════════════ -->
-
-<div class="section">
-  <div class="section-header">
-    <div class="section-num">✓</div>
-    <div>
-      <div class="section-title">Launch Checklist</div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="steps">
-      <div class="step"><div class="step-n">☐</div><div class="step-body"><div class="step-title">Create Firebase project at console.firebase.google.com</div></div></div>
-      <div class="step"><div class="step-n">☐</div><div class="step-body"><div class="step-title">Paste your firebaseConfig into index.html</div></div></div>
-      <div class="step"><div class="step-n">☐</div><div class="step-body"><div class="step-title">Enable Email/Password + Google Auth</div></div></div>
-      <div class="step"><div class="step-n">☐</div><div class="step-body"><div class="step-title">Create Firestore DB in Production mode (asia-south1 region)</div></div></div>
-      <div class="step"><div class="step-n">☐</div><div class="step-body"><div class="step-title">Paste Firestore security rules and Publish</div></div></div>
-      <div class="step"><div class="step-n">☐</div><div class="step-body"><div class="step-title">Run: npm install -g firebase-tools → firebase login → firebase init → firebase deploy</div></div></div>
-      <div class="step"><div class="step-n">☐</div><div class="step-body"><div class="step-title">Test sign-up and note saving on the live URL</div></div></div>
-      <div class="step"><div class="step-n">☐</div><div class="step-body"><div class="step-title">(Optional) Buy domain and connect to Firebase Hosting</div></div></div>
-      <div class="step"><div class="step-n">☐</div><div class="step-body"><div class="step-title">(Optional) Add authorized domain in Auth settings</div></div></div>
-    </div>
-  </div>
-</div>
-
-</div><!-- end page-wrap -->
 </body>
 </html>
