@@ -1,1466 +1,304 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Project Studio Pro</title>
-<link rel="manifest" href="manifest.json" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
-
-<!-- ═══ FIREBASE SDKs (v9 compat) ═══════════════════════════════════ -->
-
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jyotisha Quick Reference</title>
 <style>
-/* ══════════════════════════════════════════════════════════════
-   CSS VARIABLES & RESET
-══════════════════════════════════════════════════════════════ */
-:root {
-  --navy:      #0f172a;
-  --navy2:     #1e293b;
-  --indigo:    #4f46e5;
-  --indigo2:   #6366f1;
-  --teal:      #0d9488;
-  --teal2:     #14b8a6;
-  --amber:     #f59e0b;
-  --surface:   #ffffff;
-  --surface2:  #f8fafc;
-  --surface3:  #f1f5f9;
-  --border:    #e2e8f0;
-  --text:      #0f172a;
-  --text2:     #475569;
-  --text3:     #94a3b8;
-  --success:   #10b981;
-  --danger:    #ef4444;
-  --radius:    12px;
-  --radius-lg: 20px;
-  --shadow:    0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.06);
-  --shadow-lg: 0 8px 32px rgba(15,23,42,.12);
-  --transition:.2s cubic-bezier(.4,0,.2,1);
-}
-[data-theme="dark"] {
-  --surface:  #1e293b; --surface2: #0f172a; --surface3: #0d1526;
-  --border:   #334155; --text:     #f1f5f9; --text2:    #94a3b8;
-  --text3:    #475569;
-  --shadow:   0 1px 3px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.2);
-  --shadow-lg:0 8px 32px rgba(0,0,0,.4);
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{font-size:15px;scroll-behavior:smooth}
-body{font-family:'DM Sans',sans-serif;background:var(--surface2);color:var(--text);min-height:100vh;transition:background var(--transition),color var(--transition)}
-
-/* ══════════════════════════════════════════════════════════════
-   AUTH SCREEN
-══════════════════════════════════════════════════════════════ */
-#auth-screen {
-  min-height:100vh;
-  display:flex; align-items:center; justify-content:center;
-  background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
-  padding:1rem;
-}
-.auth-card {
-  background:var(--surface); border-radius:24px;
-  padding:2.5rem 2rem; width:100%; max-width:420px;
-  box-shadow:0 24px 64px rgba(0,0,0,.35);
-  text-align:center;
-}
-.auth-logo {
-  font-family:'Sora',sans-serif; font-weight:800; font-size:1.5rem;
-  color:var(--indigo); display:flex; align-items:center;
-  justify-content:center; gap:.6rem; margin-bottom:.5rem;
-}
-.auth-logo-icon {
-  width:44px; height:44px; border-radius:14px;
-  background:linear-gradient(135deg,var(--indigo),var(--teal));
-  display:flex; align-items:center; justify-content:center;
-  font-size:1.3rem;
-}
-.auth-tagline { color:var(--text2); font-size:.9rem; margin-bottom:2rem; }
-.auth-divider {
-  display:flex; align-items:center; gap:1rem; margin:1.5rem 0;
-  color:var(--text3); font-size:.82rem;
-}
-.auth-divider::before,.auth-divider::after {
-  content:''; flex:1; height:1px; background:var(--border);
-}
-.auth-input {
-  width:100%; padding:.7rem 1rem; border-radius:10px;
-  border:1.5px solid var(--border); background:var(--surface2);
-  color:var(--text); font-family:'DM Sans',sans-serif;
-  font-size:.93rem; margin-bottom:.7rem;
-  transition:border-color var(--transition);
-}
-.auth-input:focus { outline:none; border-color:var(--indigo); }
-.google-btn {
-  width:100%; padding:.75rem 1rem; border-radius:12px;
-  border:1.5px solid var(--border); background:var(--surface);
-  color:var(--text); font-family:'DM Sans',sans-serif;
-  font-weight:600; font-size:.93rem; cursor:pointer;
-  display:flex; align-items:center; justify-content:center; gap:.65rem;
-  transition:all var(--transition); margin-bottom:.7rem;
-}
-.google-btn:hover { background:var(--surface3); transform:translateY(-1px); box-shadow:var(--shadow); }
-.google-icon { font-size:1.1rem; }
-.auth-btn {
-  width:100%; padding:.75rem; border-radius:12px; border:none;
-  background:linear-gradient(135deg,var(--indigo),var(--indigo2));
-  color:#fff; font-family:'Sora',sans-serif; font-weight:700;
-  font-size:.93rem; cursor:pointer; margin-bottom:.7rem;
-  transition:all var(--transition);
-  box-shadow:0 2px 10px rgba(79,70,229,.35);
-}
-.auth-btn:hover { transform:translateY(-1px); box-shadow:0 4px 18px rgba(79,70,229,.45); }
-.auth-btn:disabled { opacity:.6; cursor:not-allowed; transform:none; }
-.auth-switch {
-  font-size:.85rem; color:var(--text2); margin-top:1rem;
-}
-.auth-switch a { color:var(--indigo); cursor:pointer; font-weight:600; text-decoration:none; }
-.auth-error {
-  background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.3);
-  color:var(--danger); border-radius:9px; padding:.6rem .9rem;
-  font-size:.85rem; margin-bottom:.7rem; display:none;
-}
-
-/* ══════════════════════════════════════════════════════════════
-   LOADING OVERLAY
-══════════════════════════════════════════════════════════════ */
-#loading-screen {
-  position:fixed; inset:0; z-index:999;
-  background:var(--navy2); display:flex; flex-direction:column;
-  align-items:center; justify-content:center; gap:1rem;
-  color:#fff; font-family:'Sora',sans-serif;
-}
-.loader {
-  width:40px; height:40px; border-radius:50%;
-  border:3px solid rgba(255,255,255,.15);
-  border-top-color:var(--teal);
-  animation:spin .8s linear infinite;
-}
-@keyframes spin { to { transform:rotate(360deg); } }
-.loader-text { font-size:.9rem; opacity:.7; }
-
-/* ══════════════════════════════════════════════════════════════
-   APP (hidden until authed)
-══════════════════════════════════════════════════════════════ */
-#app { display:none; }
-
-/* ── TOP NAV ─────────────────────────── */
-.topbar {
-  position:sticky; top:0; z-index:100;
-  background:var(--surface); border-bottom:1px solid var(--border);
-  box-shadow:var(--shadow); padding:0 1.5rem; height:62px;
-  display:flex; align-items:center; gap:1rem;
-  transition:background var(--transition);
-}
-.logo {
-  font-family:'Sora',sans-serif; font-weight:800; font-size:1.1rem;
-  color:var(--indigo); display:flex; align-items:center; gap:.5rem;
-  text-decoration:none; flex-shrink:0;
-}
-.logo-icon {
-  width:34px; height:34px; border-radius:10px;
-  background:linear-gradient(135deg,var(--indigo),var(--teal));
-  display:flex; align-items:center; justify-content:center;
-  font-size:.9rem; color:#fff;
-}
-.nav-tabs { display:flex; gap:.25rem; margin-left:.5rem; overflow-x:auto; scrollbar-width:none; }
-.nav-tabs::-webkit-scrollbar { display:none; }
-.nav-tab {
-  padding:.45rem .9rem; border-radius:8px;
-  font-family:'DM Sans',sans-serif; font-weight:500; font-size:.88rem;
-  color:var(--text2); cursor:pointer; border:none; background:transparent; white-space:nowrap;
-  transition:background var(--transition),color var(--transition);
-}
-.nav-tab:hover { background:var(--surface3); color:var(--text); }
-.nav-tab.active { background:linear-gradient(135deg,rgba(79,70,229,.12),rgba(13,148,136,.08)); color:var(--indigo); }
-.spacer { flex:1; }
-.topbar-actions { display:flex; align-items:center; gap:.6rem; }
-.btn-icon {
-  width:36px; height:36px; border-radius:9px; border:1px solid var(--border);
-  background:var(--surface2); display:flex; align-items:center; justify-content:center;
-  cursor:pointer; font-size:.95rem; transition:all var(--transition);
-}
-.btn-icon:hover { background:var(--surface3); transform:translateY(-1px); }
-.btn-primary {
-  padding:.45rem 1rem; border-radius:9px;
-  background:linear-gradient(135deg,var(--indigo),var(--indigo2));
-  color:#fff; font-family:'DM Sans',sans-serif; font-weight:600; font-size:.88rem;
-  border:none; cursor:pointer; display:flex; align-items:center; gap:.4rem;
-  transition:all var(--transition); box-shadow:0 2px 8px rgba(79,70,229,.3);
-}
-.btn-primary:hover { transform:translateY(-1px); box-shadow:0 4px 16px rgba(79,70,229,.4); }
-.btn-teal { background:linear-gradient(135deg,var(--teal),var(--teal2)); box-shadow:0 2px 8px rgba(13,148,136,.3); }
-.btn-teal:hover { box-shadow:0 4px 16px rgba(13,148,136,.4); }
-
-/* user avatar dropdown */
-.avatar-wrap { position:relative; }
-.avatar {
-  width:34px; height:34px; border-radius:50%;
-  background:linear-gradient(135deg,var(--amber),#fb923c);
-  color:#fff; font-weight:700; font-size:.78rem;
-  display:flex; align-items:center; justify-content:center;
-  cursor:pointer; font-family:'Sora',sans-serif; flex-shrink:0;
-  border:2px solid var(--border);
-}
-.avatar-menu {
-  position:absolute; top:calc(100% + .5rem); right:0;
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:12px; box-shadow:var(--shadow-lg);
-  min-width:200px; padding:.5rem;
-  display:none; z-index:200;
-}
-.avatar-menu.open { display:block; }
-.avatar-menu-name {
-  padding:.5rem .75rem; font-weight:600; font-size:.88rem;
-  color:var(--text); border-bottom:1px solid var(--border); margin-bottom:.4rem;
-}
-.avatar-menu-email { font-size:.78rem; color:var(--text2); font-weight:400; }
-.avatar-menu-item {
-  padding:.55rem .75rem; border-radius:8px; cursor:pointer;
-  font-size:.88rem; color:var(--text2); transition:background var(--transition);
-  display:flex; align-items:center; gap:.5rem;
-}
-.avatar-menu-item:hover { background:var(--surface3); color:var(--text); }
-.avatar-menu-item.danger { color:var(--danger); }
-.avatar-menu-item.danger:hover { background:rgba(239,68,68,.1); }
-
-/* ── SYNC STATUS ─────────────────────── */
-.sync-status {
-  display:flex; align-items:center; gap:.35rem;
-  font-size:.78rem; color:var(--text3); flex-shrink:0;
-}
-.sync-dot {
-  width:7px; height:7px; border-radius:50%;
-  background:var(--success);
-}
-.sync-dot.saving { background:var(--amber); animation:pulse .8s ease infinite; }
-.sync-dot.error  { background:var(--danger); }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-
-/* ── LAYOUT ──────────────────────────── */
-.layout { display:flex; min-height:calc(100vh - 62px); }
-
-/* ── SIDEBAR ─────────────────────────── */
-.sidebar {
-  width:240px; flex-shrink:0; background:var(--surface);
-  border-right:1px solid var(--border); padding:1.25rem .75rem;
-  display:flex; flex-direction:column; gap:.25rem;
-  transition:background var(--transition);
-}
-.sidebar-section-label {
-  font-size:.72rem; font-weight:600; letter-spacing:.08em;
-  text-transform:uppercase; color:var(--text3);
-  padding:.75rem .75rem .35rem; font-family:'Sora',sans-serif;
-}
-.sidebar-item {
-  display:flex; align-items:center; gap:.65rem;
-  padding:.6rem .75rem; border-radius:9px; color:var(--text2);
-  font-weight:500; font-size:.9rem; cursor:pointer; border:none;
-  background:transparent; width:100%; text-align:left;
-  transition:all var(--transition);
-}
-.sidebar-item:hover { background:var(--surface3); color:var(--text); }
-.sidebar-item.active {
-  background:linear-gradient(135deg,rgba(79,70,229,.12),rgba(13,148,136,.06));
-  color:var(--indigo); font-weight:600;
-}
-.sidebar-item .icon { font-size:1.05rem; width:20px; text-align:center; flex-shrink:0; }
-.sidebar-item .count {
-  margin-left:auto; background:var(--surface3); color:var(--text3);
-  font-size:.72rem; font-weight:600; padding:.1rem .45rem;
-  border-radius:20px; font-family:'Sora',sans-serif;
-}
-.sidebar-item.active .count { background:rgba(79,70,229,.15); color:var(--indigo); }
-.sidebar-divider { height:1px; background:var(--border); margin:.5rem 0; }
-.sidebar-footer {
-  margin-top:auto; padding:.75rem; border-radius:12px;
-  background:linear-gradient(135deg,rgba(79,70,229,.07),rgba(13,148,136,.05));
-  border:1px solid var(--border);
-}
-.sidebar-footer-label { font-size:.8rem; color:var(--text2); font-weight:500; margin-bottom:.5rem; }
-.upgrade-btn {
-  display:block; width:100%; padding:.5rem; border-radius:8px; text-align:center;
-  background:linear-gradient(135deg,var(--indigo),var(--teal));
-  color:#fff; font-weight:600; font-size:.82rem; border:none; cursor:pointer;
-  font-family:'Sora',sans-serif; transition:opacity var(--transition);
-}
-.upgrade-btn:hover { opacity:.88; }
-
-/* ── MAIN ────────────────────────────── */
-.main { flex:1; padding:1.75rem; overflow-y:auto; min-width:0; }
-
-/* ── PAGE HEADER ─────────────────────── */
-.page-header { display:flex; align-items:flex-start; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap; }
-.page-header-text { flex:1; min-width:0; }
-.page-title { font-family:'Sora',sans-serif; font-size:1.55rem; font-weight:800; color:var(--text); line-height:1.2; }
-.page-subtitle { color:var(--text2); font-size:.9rem; margin-top:.25rem; }
-.page-actions { display:flex; gap:.6rem; align-items:center; flex-wrap:wrap; }
-
-/* ── SELECTOR STRIP ──────────────────── */
-.selector-strip {
-  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg);
-  padding:1.25rem 1.5rem; margin-bottom:1.25rem;
-  display:flex; gap:1.25rem; align-items:flex-end; flex-wrap:wrap;
-  box-shadow:var(--shadow);
-}
-.field-group { flex:1; min-width:160px; }
-.field-label {
-  display:block; font-size:.78rem; font-weight:600; color:var(--text2);
-  margin-bottom:.4rem; font-family:'Sora',sans-serif; letter-spacing:.03em;
-}
-.field-select {
-  width:100%; padding:.58rem .85rem; border-radius:9px; border:1.5px solid var(--border);
-  background:var(--surface2); color:var(--text); font-family:'DM Sans',sans-serif;
-  font-size:.9rem; appearance:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3E%3Cpath fill='%2394a3b8' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-  background-repeat:no-repeat; background-position:right .6rem center; padding-right:2rem;
-  transition:border-color var(--transition),box-shadow var(--transition); cursor:pointer;
-}
-.field-select:focus { outline:none; border-color:var(--indigo); box-shadow:0 0 0 3px rgba(79,70,229,.12); }
-
-/* ── NOTE EDITOR ─────────────────────── */
-.note-editor-card {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:var(--radius-lg); overflow:hidden; margin-bottom:1.25rem;
-  box-shadow:var(--shadow);
-}
-.note-editor-toolbar {
-  padding:.75rem 1.25rem; border-bottom:1px solid var(--border);
-  display:flex; gap:.5rem; align-items:center; background:var(--surface2); flex-wrap:wrap;
-}
-.toolbar-btn {
-  padding:.3rem .6rem; border-radius:6px; border:1px solid var(--border);
-  background:var(--surface); color:var(--text2); font-size:.82rem; cursor:pointer;
-  font-family:'DM Sans',sans-serif; transition:all var(--transition);
-}
-.toolbar-btn:hover { background:var(--surface3); color:var(--text); }
-.toolbar-sep { width:1px; height:20px; background:var(--border); margin:0 .2rem; }
-.note-textarea {
-  width:100%; min-height:130px; padding:1.1rem 1.25rem; border:none;
-  background:var(--surface); color:var(--text);
-  font-family:'DM Sans',sans-serif; font-size:.95rem; line-height:1.65; resize:vertical;
-}
-.note-textarea:focus { outline:none; }
-.note-textarea::placeholder { color:var(--text3); }
-.note-editor-footer {
-  padding:.75rem 1.25rem; border-top:1px solid var(--border);
-  display:flex; justify-content:space-between; align-items:center;
-  background:var(--surface2); flex-wrap:wrap; gap:.5rem;
-}
-.char-count { font-size:.8rem; color:var(--text3); }
-.save-actions { display:flex; gap:.6rem; }
-
-/* ── STATS ROW ───────────────────────── */
-.stats-row {
-  display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
-  gap:.9rem; margin-bottom:1.25rem;
-}
-.stat-card {
-  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
-  padding:1rem 1.1rem; box-shadow:var(--shadow); transition:transform var(--transition);
-}
-.stat-card:hover { transform:translateY(-2px); }
-.stat-label { font-size:.78rem; color:var(--text2); font-weight:500; margin-bottom:.25rem; }
-.stat-value { font-family:'Sora',sans-serif; font-size:1.6rem; font-weight:800; color:var(--text); }
-.stat-value.indigo { color:var(--indigo); }
-.stat-value.teal   { color:var(--teal); }
-.stat-value.amber  { color:var(--amber); }
-
-/* ── MANAGE GRID ─────────────────────── */
-.manage-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1.1rem; margin-bottom:1.25rem; }
-.manage-card {
-  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg);
-  box-shadow:var(--shadow); overflow:hidden;
-  transition:box-shadow var(--transition),transform var(--transition);
-}
-.manage-card:hover { box-shadow:var(--shadow-lg); transform:translateY(-2px); }
-.manage-card-header {
-  padding:1rem 1.25rem; display:flex; align-items:center; gap:.75rem;
-  border-bottom:1px solid var(--border);
-}
-.manage-card-icon {
-  width:38px; height:38px; border-radius:10px;
-  display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0;
-}
-.ic-indigo { background:rgba(79,70,229,.12); }
-.ic-teal   { background:rgba(13,148,136,.12); }
-.ic-amber  { background:rgba(245,158,11,.12); }
-.manage-card-title { font-family:'Sora',sans-serif; font-weight:700; font-size:.98rem; color:var(--text); }
-.manage-card-subtitle { font-size:.8rem; color:var(--text2); margin-top:.1rem; }
-.manage-card-body { padding:1rem 1.25rem; }
-.list-items { display:flex; flex-direction:column; gap:.5rem; }
-.list-item {
-  display:flex; align-items:center; gap:.65rem; padding:.55rem .75rem;
-  border-radius:9px; background:var(--surface2); border:1px solid var(--border);
-  cursor:pointer; transition:all var(--transition);
-}
-.list-item:hover { background:var(--surface3); }
-.list-item-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-.dot-indigo { background:var(--indigo); }
-.dot-teal   { background:var(--teal); }
-.dot-amber  { background:var(--amber); }
-.list-item-text { flex:1; font-size:.88rem; font-weight:500; color:var(--text); }
-.list-item-actions { display:flex; gap:.35rem; opacity:0; transition:opacity var(--transition); }
-.list-item:hover .list-item-actions { opacity:1; }
-.item-action-btn {
-  width:24px; height:24px; border-radius:6px; border:none;
-  background:var(--surface); color:var(--text2); cursor:pointer; font-size:.75rem;
-  display:flex; align-items:center; justify-content:center; transition:all var(--transition);
-}
-.item-action-btn.del:hover { background:var(--danger); color:#fff; }
-.add-item-row { display:flex; gap:.5rem; margin-top:.75rem; }
-.add-input {
-  flex:1; padding:.52rem .8rem; border-radius:9px; border:1.5px solid var(--border);
-  background:var(--surface2); color:var(--text); font-family:'DM Sans',sans-serif;
-  font-size:.88rem; transition:border-color var(--transition);
-}
-.add-input:focus { outline:none; border-color:var(--indigo); }
-.add-btn { padding:.52rem .9rem; border-radius:9px; border:none; font-weight:600; font-size:.85rem; cursor:pointer; transition:all var(--transition); font-family:'DM Sans',sans-serif; }
-
-/* ── NOTES TABLE ─────────────────────── */
-.notes-card {
-  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg);
-  box-shadow:var(--shadow); overflow:hidden; margin-bottom:1.25rem;
-}
-.notes-card-header {
-  padding:1rem 1.25rem; border-bottom:1px solid var(--border);
-  display:flex; align-items:center; justify-content:space-between; gap:1rem;
-  background:var(--surface2); flex-wrap:wrap;
-}
-.notes-card-title { font-family:'Sora',sans-serif; font-weight:700; font-size:.98rem; display:flex; align-items:center; gap:.5rem; }
-.badge {
-  padding:.15rem .5rem; border-radius:20px; font-size:.72rem; font-weight:700;
-  background:rgba(79,70,229,.12); color:var(--indigo); font-family:'Sora',sans-serif;
-}
-.search-input {
-  padding:.45rem .85rem; border-radius:9px; border:1.5px solid var(--border);
-  background:var(--surface); color:var(--text); font-family:'DM Sans',sans-serif;
-  font-size:.88rem; min-width:200px; transition:border-color var(--transition);
-}
-.search-input:focus { outline:none; border-color:var(--indigo); }
-.notes-table { width:100%; border-collapse:collapse; }
-.notes-table th {
-  padding:.65rem 1.1rem; text-align:left; font-size:.77rem; font-weight:700;
-  letter-spacing:.05em; text-transform:uppercase; color:var(--text3);
-  border-bottom:1px solid var(--border); font-family:'Sora',sans-serif; background:var(--surface2);
-}
-.notes-table td {
-  padding:.75rem 1.1rem; border-bottom:1px solid var(--border);
-  font-size:.88rem; color:var(--text2); vertical-align:top;
-}
-.notes-table tr:last-child td { border-bottom:none; }
-.notes-table tr:hover td { background:var(--surface3); }
-.note-project-chip {
-  display:inline-flex; align-items:center; gap:.3rem; padding:.2rem .55rem;
-  border-radius:20px; font-size:.77rem; font-weight:600;
-  background:rgba(79,70,229,.1); color:var(--indigo); font-family:'Sora',sans-serif;
-}
-.note-branch-chip {
-  display:inline-flex; padding:.2rem .55rem; border-radius:20px;
-  font-size:.77rem; font-weight:600; background:rgba(13,148,136,.1); color:var(--teal); font-family:'Sora',sans-serif;
-}
-.note-text-cell { max-width:320px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--text); }
-.note-actions { display:flex; gap:.4rem; }
-.note-btn {
-  padding:.3rem .6rem; border-radius:7px; border:1px solid var(--border);
-  background:var(--surface); color:var(--text2); font-size:.78rem; cursor:pointer;
-  font-family:'DM Sans',sans-serif; transition:all var(--transition);
-}
-.note-btn:hover { background:var(--indigo); color:#fff; border-color:var(--indigo); }
-.note-btn.del:hover { background:var(--danger); color:#fff; border-color:var(--danger); }
-
-/* ── SYNC BANNER ─────────────────────── */
-.sync-banner {
-  background:linear-gradient(135deg,var(--navy),var(--navy2)); color:#fff;
-  border-radius:var(--radius-lg); padding:1.25rem 1.5rem;
-  display:flex; align-items:center; gap:1rem; box-shadow:var(--shadow-lg);
-  margin-bottom:1.25rem; flex-wrap:wrap;
-}
-.sync-banner-icon {
-  font-size:1.5rem; width:44px; height:44px; border-radius:12px;
-  background:rgba(255,255,255,.1); display:flex; align-items:center; justify-content:center; flex-shrink:0;
-}
-.sync-banner-text { flex:1; }
-.sync-banner-title { font-family:'Sora',sans-serif; font-weight:700; font-size:1rem; margin-bottom:.2rem; }
-.sync-banner-sub { font-size:.83rem; opacity:.7; }
-.sync-banner-context { flex:1; min-width:200px; }
-.sync-textarea {
-  width:100%; padding:.65rem .9rem; border-radius:10px;
-  border:1.5px solid rgba(255,255,255,.2); background:rgba(255,255,255,.08);
-  color:#fff; font-family:'DM Sans',sans-serif; font-size:.88rem;
-  resize:none; min-height:70px; transition:border-color var(--transition);
-}
-.sync-textarea:focus { outline:none; border-color:rgba(255,255,255,.5); }
-.sync-textarea::placeholder { color:rgba(255,255,255,.4); }
-.sync-btn {
-  padding:.65rem 1.2rem; border-radius:10px;
-  background:linear-gradient(135deg,var(--teal),var(--teal2));
-  color:#fff; font-weight:700; font-size:.88rem; border:none; cursor:pointer;
-  font-family:'Sora',sans-serif; box-shadow:0 2px 10px rgba(13,148,136,.4);
-  transition:all var(--transition); white-space:nowrap; align-self:flex-end;
-}
-.sync-btn:hover { transform:translateY(-1px); box-shadow:0 4px 16px rgba(13,148,136,.5); }
-
-/* ── EXPORT BAR ──────────────────────── */
-.export-bar { display:flex; gap:.6rem; align-items:center; flex-wrap:wrap; margin-bottom:1.25rem; }
-.export-btn {
-  padding:.5rem 1.1rem; border-radius:9px; font-weight:600; font-size:.85rem;
-  border:1.5px solid var(--border); background:var(--surface); color:var(--text2);
-  cursor:pointer; font-family:'DM Sans',sans-serif; display:flex; align-items:center; gap:.4rem;
-  transition:all var(--transition);
-}
-.export-btn:hover { background:var(--navy); color:#fff; border-color:var(--navy); transform:translateY(-1px); box-shadow:var(--shadow); }
-
-/* ── TOAST ───────────────────────────── */
-.toast {
-  position:fixed; bottom:1.5rem; right:1.5rem;
-  background:var(--navy); color:#fff; padding:.8rem 1.2rem; border-radius:12px;
-  font-size:.88rem; font-weight:500; box-shadow:var(--shadow-lg);
-  transform:translateY(100px); opacity:0; transition:all .3s cubic-bezier(.4,0,.2,1);
-  z-index:300; display:flex; align-items:center; gap:.5rem; max-width:320px;
-  font-family:'DM Sans',sans-serif;
-}
-.toast.show { transform:translateY(0); opacity:1; }
-.toast.success { background:var(--teal); }
-.toast.error   { background:var(--danger); }
-
-/* ── EMPTY STATE ─────────────────────── */
-.empty-state { text-align:center; padding:3rem 1rem; color:var(--text3); }
-.empty-icon  { font-size:2.5rem; margin-bottom:.75rem; }
-.empty-label { font-size:.95rem; font-weight:500; color:var(--text2); }
-.empty-sub   { font-size:.83rem; margin-top:.25rem; }
-
-/* ── PAGE VISIBILITY ─────────────────── */
-.page { display:none; }
-.page.active { display:block; }
-
-/* ── ANIMATIONS ──────────────────────── */
-@keyframes fadeInUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-.animate-in { animation:fadeInUp .35s ease both; }
-.delay-1{animation-delay:.05s} .delay-2{animation-delay:.1s}
-.delay-3{animation-delay:.15s} .delay-4{animation-delay:.2s} .delay-5{animation-delay:.25s}
-
-/* ── RESPONSIVE ──────────────────────── */
-@media(max-width:768px){
-  .sidebar{display:none} .main{padding:1rem}
-  .page-title{font-size:1.25rem} .manage-grid{grid-template-columns:1fr}
-  .stats-row{grid-template-columns:repeat(2,1fr)} .sync-banner{flex-direction:column}
-  .notes-table th:nth-child(3),.notes-table td:nth-child(3),
-  .notes-table th:nth-child(4),.notes-table td:nth-child(4){display:none}
-}
+:root{--bg:#fdfaf3;--ink:#2a1f0f;--muted:#6b5a3e;--accent:#8b2e1f;--accent2:#b8860b;--card:#fffdf5;--border:#e8dcc0}
+*{box-sizing:border-box}
+body{margin:0;font-family:Georgia,"Palatino Linotype",serif;background:var(--bg);color:var(--ink);line-height:1.55}
+.wrap{max-width:880px;margin:0 auto;padding:24px 18px 60px}
+header{border-bottom:2px solid var(--accent);padding-bottom:14px;margin-bottom:24px}
+h1{font-size:26px;margin:0 0 4px;color:var(--accent);letter-spacing:.3px}
+.sub{font-size:14px;color:var(--muted);font-style:italic}
+h2{font-size:20px;margin:32px 0 12px;color:var(--accent);border-left:4px solid var(--accent2);padding-left:10px}
+h3{font-size:16px;margin:18px 0 6px;color:var(--ink)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:14px 16px;margin:10px 0;box-shadow:0 1px 3px rgba(80,50,10,.08)}
+.planet-name{font-weight:bold;color:var(--accent);font-size:15px}
+.label{display:inline-block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-right:6px;font-family:Arial,sans-serif;font-weight:bold}
+ul{margin:6px 0;padding-left:20px}
+li{margin-bottom:4px}
+.grid{display:grid;grid-template-columns:1fr;gap:10px}
+@media(min-width:640px){.grid{grid-template-columns:1fr 1fr}}
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px;background:var(--card)}
+th,td{border:1px solid var(--border);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:#f3e8cf;font-family:Arial,sans-serif;font-size:13px}
+.note{background:#fff5e0;border-left:3px solid var(--accent2);padding:10px 14px;font-size:14px;margin:14px 0;border-radius:0 4px 4px 0}
+.example{background:#f0eadb;padding:12px 14px;border-radius:4px;margin:10px 0;font-size:14px}
+.example b{color:var(--accent)}
+.small{font-size:13px;color:var(--muted)}
+.toc{background:#fff5e0;border:1px dashed var(--accent2);padding:10px 16px;border-radius:4px;font-size:14px}
+.toc a{color:var(--accent);text-decoration:none}
+.toc a:hover{text-decoration:underline}
+.toc ol{margin:6px 0 0 18px;padding:0}
+hr{border:none;border-top:1px dashed var(--border);margin:24px 0}
 </style>
-
 </head>
 <body>
+<div class="wrap">
 
-<!-- ══════════════════════════════ LOADING ══════ -->
+<header>
+<h1>Jyotisha Quick Reference</h1>
+<div class="sub">Planets, Houses, Lordships & Dasha–Bhukti Logic — in plain language</div>
+</header>
 
-<div id="loading-screen">
-  <div class="loader"></div>
-  <div class="loader-text">Loading Project Studio Pro…</div>
+<div class="toc">
+<b>Contents</b>
+<ol>
+<li><a href="#planets">What each planet represents</a></li>
+<li><a href="#houses">What each house represents</a></li>
+<li><a href="#lordship">Planet placement + house lordship = result</a></li>
+<li><a href="#dasha">How dasha & bhukti deliver the result</a></li>
+<li><a href="#examples">Worked examples</a></li>
+</ol>
 </div>
 
-<!-- ══════════════════════════════ AUTH SCREEN ══════ -->
+<h2 id="planets">1. What each planet represents</h2>
+<p class="small">Each planet is a "significator" (karaka) — it carries certain themes wherever it goes.</p>
 
-<div id="auth-screen" style="display:none">
-  <div class="auth-card">
-    <div class="auth-logo">
-      <div class="auth-logo-icon">🗂</div>
-      Project Studio <span style="color:var(--teal);margin-left:.2rem">Pro</span>
-    </div>
-    <p class="auth-tagline">Your structured project note-taking workspace</p>
+<div class="grid">
 
-```
-<!-- Google Sign-In -->
-<button class="google-btn" onclick="signInGoogle()">
-  <span class="google-icon">🔵</span> Continue with Google
-</button>
+<div class="card"><div class="planet-name">Sun (Surya)</div>
+<span class="label">Core role</span> Soul, ego, authority, father.
+<ul><li>Affects: self-confidence, government dealings, status, leadership.</li>
+<li>Body: heart, eyes, bones, vitality.</li>
+<li>Strong → respected, principled. Weak → low confidence, ego issues.</li></ul></div>
 
-<div class="auth-divider">or</div>
+<div class="card"><div class="planet-name">Moon (Chandra)</div>
+<span class="label">Core role</span> Mind, emotions, mother.
+<ul><li>Affects: mood, comfort, public popularity, nurturing.</li>
+<li>Body: chest, fluids, mental health.</li>
+<li>Strong → calm, intuitive. Weak → anxious, restless mind.</li></ul></div>
 
-<!-- Email/Password -->
-<div id="auth-error" class="auth-error"></div>
-<input class="auth-input" type="email" id="auth-email" placeholder="Email address" />
-<input class="auth-input" type="password" id="auth-password" placeholder="Password (min. 6 chars)" />
-<button class="auth-btn" id="auth-main-btn" onclick="signInEmail()">Sign In</button>
-<p class="auth-switch" id="auth-switch-text">
-  Don't have an account? <a onclick="toggleAuthMode()">Sign Up</a>
+<div class="card"><div class="planet-name">Mars (Mangal/Kuja)</div>
+<span class="label">Core role</span> Energy, courage, younger siblings, land.
+<ul><li>Affects: drive, aggression, accidents, real estate, brothers.</li>
+<li>Body: blood, muscles, marrow.</li>
+<li>Strong → bold, decisive. Weak → anger, conflicts, injuries.</li></ul></div>
+
+<div class="card"><div class="planet-name">Mercury (Budha)</div>
+<span class="label">Core role</span> Intellect, speech, communication, commerce.
+<ul><li>Affects: learning, writing, business, analysis, friends.</li>
+<li>Body: nerves, skin, voice.</li>
+<li>Strong → sharp mind, witty. Weak → confused speech, learning issues.</li></ul></div>
+
+<div class="card"><div class="planet-name">Jupiter (Guru)</div>
+<span class="label">Core role</span> Wisdom, dharma, children, husband (for women).
+<ul><li>Affects: knowledge, guidance, wealth, ethics, religion, teachers.</li>
+<li>Body: liver, fat, growth.</li>
+<li>Strong → fortunate, wise. Weak → directionless, faithless.</li></ul></div>
+
+<div class="card"><div class="planet-name">Venus (Shukra)</div>
+<span class="label">Core role</span> Love, marriage, comforts, wife (for men).
+<ul><li>Affects: relationships, beauty, vehicles, art, luxuries.</li>
+<li>Body: reproductive system, kidneys, face.</li>
+<li>Strong → charming, prosperous. Weak → relationship trouble, lack of comfort.</li></ul></div>
+
+<div class="card"><div class="planet-name">Saturn (Shani)</div>
+<span class="label">Core role</span> Discipline, delay, karma, longevity, servants.
+<ul><li>Affects: hard work, profession, hardship, patience, old age.</li>
+<li>Body: bones, joints, teeth, nerves.</li>
+<li>Strong → patient, professional. Weak → delays, depression, struggle.</li></ul></div>
+
+<div class="card"><div class="planet-name">Rahu (North Node)</div>
+<span class="label">Core role</span> Ambition, illusion, foreign things, obsession.
+<ul><li>Affects: sudden gains, addictions, unconventional paths, fame.</li>
+<li>Not a physical planet — works through the house and lord it sits with.</li>
+<li>Strong → out-of-the-box success. Weak → confusion, manipulation, scandals.</li></ul></div>
+
+<div class="card"><div class="planet-name">Ketu (South Node)</div>
+<span class="label">Core role</span> Detachment, spirituality, past-life skills.
+<ul><li>Affects: moksha, occult, sudden losses, isolation, research.</li>
+<li>Acts like Mars + a renunciate flavour.</li>
+<li>Strong → spiritual insight, mastery. Weak → confusion, sudden setbacks.</li></ul></div>
+
+</div>
+
+<h2 id="houses">2. What each house represents</h2>
+<p class="small">Houses (bhavas) are the 12 areas of life. The sign on the 1st house cusp is the lagna (ascendant).</p>
+
+<table>
+<thead><tr><th style="width:80px">House</th><th>What it represents</th></tr></thead>
+<tbody>
+<tr><td><b>1st</b><br><span class="small">Lagna / Tanu</span></td><td>Self, body, personality, health, overall life direction. The "you" of the chart.</td></tr>
+<tr><td><b>2nd</b><br><span class="small">Dhana</span></td><td>Money, savings, family, speech, food. What you own and what you say.</td></tr>
+<tr><td><b>3rd</b><br><span class="small">Sahaja</span></td><td>Younger siblings, courage, short travels, hobbies, communication efforts.</td></tr>
+<tr><td><b>4th</b><br><span class="small">Sukha</span></td><td>Mother, home, vehicles, peace of mind, basic education, property.</td></tr>
+<tr><td><b>5th</b><br><span class="small">Putra</span></td><td>Children, intelligence, romance, speculation, past-life merit (poorvapunya).</td></tr>
+<tr><td><b>6th</b><br><span class="small">Ari / Ripu</span></td><td>Enemies, debts, disease, service, daily work, competition.</td></tr>
+<tr><td><b>7th</b><br><span class="small">Kalatra</span></td><td>Spouse, marriage, partnerships, business associates, public dealings.</td></tr>
+<tr><td><b>8th</b><br><span class="small">Randhra / Ayur</span></td><td>Longevity, sudden events, inheritance, occult, in-laws' wealth, transformation.</td></tr>
+<tr><td><b>9th</b><br><span class="small">Bhagya / Dharma</span></td><td>Luck, father, guru, higher learning, long travels, religion, ethics.</td></tr>
+<tr><td><b>10th</b><br><span class="small">Karma</span></td><td>Career, profession, status, reputation, public role, authority.</td></tr>
+<tr><td><b>11th</b><br><span class="small">Labha</span></td><td>Income, gains, friends, elder siblings, fulfilment of desires, networks.</td></tr>
+<tr><td><b>12th</b><br><span class="small">Vyaya / Moksha</span></td><td>Expenses, losses, foreign lands, sleep, hidden things, liberation, isolation.</td></tr>
+</tbody>
+</table>
+
+<div class="note">
+<b>Quick category check:</b><br>
+<b>Kendra</b> (angles): 1, 4, 7, 10 — pillars of life.<br>
+<b>Trikona</b> (trines): 1, 5, 9 — luck and dharma.<br>
+<b>Dusthana</b>: 6, 8, 12 — challenges, but also growth.<br>
+<b>Upachaya</b>: 3, 6, 10, 11 — improve with age/effort.
+</div>
+
+<h2 id="lordship">3. Planet placement + house lordship = result</h2>
+
+<p>Every planet does <b>two jobs at once</b>:</p>
+<ul>
+<li><b>Job A — Where it sits</b> (the house it occupies): activates that area of life.</li>
+<li><b>Job B — What it owns</b> (the houses where its signs are): carries those houses' affairs with it.</li>
+</ul>
+
+<div class="note">
+<b>The basic formula:</b><br>
+A planet links its <b>owned house(s)</b> with its <b>occupied house</b>. Result depends on whether those houses are friendly or unfriendly to each other.
+</div>
+
+<h3>Step 1 — Know each sign's owner</h3>
+<table>
+<thead><tr><th>Sign</th><th>Lord</th><th>Sign</th><th>Lord</th></tr></thead>
+<tbody>
+<tr><td>Aries (Mesha)</td><td>Mars</td><td>Libra (Tula)</td><td>Venus</td></tr>
+<tr><td>Taurus (Vrishabha)</td><td>Venus</td><td>Scorpio (Vrischika)</td><td>Mars</td></tr>
+<tr><td>Gemini (Mithuna)</td><td>Mercury</td><td>Sagittarius (Dhanu)</td><td>Jupiter</td></tr>
+<tr><td>Cancer (Karka)</td><td>Moon</td><td>Capricorn (Makara)</td><td>Saturn</td></tr>
+<tr><td>Leo (Simha)</td><td>Sun</td><td>Aquarius (Kumbha)</td><td>Saturn</td></tr>
+<tr><td>Virgo (Kanya)</td><td>Mercury</td><td>Pisces (Meena)</td><td>Jupiter</td></tr>
+</tbody>
+</table>
+<p class="small">Rahu &amp; Ketu don't own signs — they take the flavour of the sign-lord they sit with.</p>
+
+<h3>Step 2 — Figure out the house lords for the chart</h3>
+<p>From the lagna, count houses 1–12. Note the planet that owns the sign on each house cusp. That planet becomes the "lord" of that house.</p>
+<div class="example">
+<b>Example:</b> Lagna is Taurus. Then 1st house = Taurus → <b>Venus is 1st lord</b>. 7th from Taurus is Scorpio → <b>Mars is 7th lord</b>. And so on for all 12 houses.
+</div>
+
+<h3>Step 3 — Read the placement</h3>
+<table>
+<thead><tr><th>Combination</th><th>Plain-language meaning</th></tr></thead>
+<tbody>
+<tr><td>Lord of <b>good house</b> (1, 4, 5, 7, 9, 10, 11) sits in <b>another good house</b></td><td>Both areas help each other. Generally favourable.</td></tr>
+<tr><td>Lord of <b>good house</b> sits in a <b>bad house</b> (6, 8, 12)</td><td>That good area suffers — its results get spent, lost or delayed.</td></tr>
+<tr><td>Lord of <b>bad house</b> sits in a <b>good house</b></td><td>Brings disturbance to that good area unless well-aspected.</td></tr>
+<tr><td>Lord of <b>bad house</b> sits in <b>another bad house</b></td><td>"Vipareeta raja yoga" — two negatives can cancel and bring sudden gains.</td></tr>
+<tr><td>Lord sits in its <b>own house / own sign</b></td><td>Strong, stable result for that house's matters.</td></tr>
+<tr><td>Lord sits in <b>exaltation</b> (Sun in Aries, Jupiter in Cancer, etc.)</td><td>Excellent result — high quality of that house's matters.</td></tr>
+<tr><td>Lord sits in <b>debilitation</b> (Sun in Libra, Saturn in Aries, etc.)</td><td>Weak result — that house's matters struggle unless cancellation applies.</td></tr>
+</tbody>
+</table>
+
+<h3>Step 4 — Read it as a sentence</h3>
+<div class="example">
+<b>Template:</b> <i>"The matters of [house owned] are experienced through [house occupied]."</i><br><br>
+<b>Example:</b> 7th lord (marriage) sits in 10th house (career) → <b>marriage matters get experienced through career</b>. Could mean: spouse met at work, spouse helps career, career affects marriage timing — exact flavour depends on planet, sign, aspects.
+</div>
+
+<div class="note">
+<b>Important checks before finalising:</b>
+<ul>
+<li>What aspects (drishti) fall on that planet?</li>
+<li>Is it conjunct another planet? Whose lordship does <i>that</i> planet carry?</li>
+<li>Is it a natural benefic (Jupiter, Venus, well-placed Moon, Mercury) or natural malefic (Saturn, Mars, Sun, Rahu, Ketu)?</li>
+<li>Is it a <b>functional benefic</b> for that lagna? (Lords of 1, 5, 9 are usually good; lords of 6, 8, 12 are usually difficult.)</li>
+</ul>
+</div>
+
+<h2 id="dasha">4. How dasha &amp; bhukti deliver the result</h2>
+
+<p>The chart shows <b>what</b> can happen. Dasha shows <b>when</b>.</p>
+
+<h3>Vimshottari Dasha — the standard 120-year cycle</h3>
+<table>
+<thead><tr><th>Planet</th><th>Years</th><th>Planet</th><th>Years</th></tr></thead>
+<tbody>
+<tr><td>Ketu</td><td>7</td><td>Saturn</td><td>19</td></tr>
+<tr><td>Venus</td><td>20</td><td>Mercury</td><td>17</td></tr>
+<tr><td>Sun</td><td>6</td><td>Total</td><td>120</td></tr>
+<tr><td>Moon</td><td>10</td><td colspan="2" class="small">Cycle starts based on Moon's nakshatra at birth.</td></tr>
+<tr><td>Mars</td><td>7</td><td colspan="2"></td></tr>
+<tr><td>Rahu</td><td>18</td><td colspan="2"></td></tr>
+<tr><td>Jupiter</td><td>16</td><td colspan="2"></td></tr>
+</tbody>
+</table>
+
+<h3>Three layers of timing</h3>
+<ul>
+<li><b>Mahadasha (MD):</b> the major period — sets the broad theme for those years.</li>
+<li><b>Antardasha / Bhukti (AD):</b> sub-period inside the MD — sets the specific theme for those months.</li>
+<li><b>Pratyantar (PD):</b> sub-sub-period — fine-tunes timing to weeks.</li>
+</ul>
+
+<h3>How to read a dasha–bhukti combination</h3>
+<div class="note">
+<b>Result during X-mahadasha &amp; Y-bhukti =</b>
+<ol>
+<li>What X represents naturally (its karaka role)</li>
+<li>The houses X owns in your chart</li>
+<li>The house X occupies</li>
+<li>The same three for Y</li>
+<li>The relationship between X and Y (friendly? same house? aspecting? in 6/8 from each other?)</li>
+</ol>
+</div>
+
+<h3>Step-by-step method</h3>
+<ol>
+<li><b>X's portfolio:</b> karakatva + houses owned + house occupied.</li>
+<li><b>Y's portfolio:</b> same exercise.</li>
+<li><b>Find the link:</b> Does Y sit in a house owned by X? Aspect X? Are they in mutual kendras (1/4/7/10) or trines (1/5/9)? Or in 6/8 (mutually difficult)?</li>
+<li><b>Predict the theme:</b> the period activates the houses common to both X and Y.</li>
+<li><b>Confirm via transit:</b> the actual event triggers when transiting Saturn or Jupiter touches the relevant house/lord.</li>
+</ol>
+
+<h2 id="examples">5. Worked examples</h2>
+
+<div class="example">
+<b>Example 1 — A simple combo</b><br>
+Lagna: Leo. Jupiter is 5th lord (Sagittarius) and 8th lord (Pisces). Suppose Jupiter sits in the 10th house.<br><br>
+<b>Reading:</b> Jupiter carries 5th-house matters (children, intelligence, education) and 8th-house matters (sudden change, in-laws, occult) <b>into</b> the 10th house (career).<br>
+→ Career involves teaching/wisdom (Jupiter karaka) + intelligence work (5th) + research or transformation (8th).<br>
+→ <b>During Jupiter mahadasha:</b> career rises through teaching, advisory or research-heavy roles. Children-related events possible. Some in-law or sudden-change events too.
+</div>
+
+<div class="example">
+<b>Example 2 — Same MD, different bhuktis</b><br>
+Continuing the above, Jupiter MD is running. Now look at bhuktis:<br><br>
+<b>Jupiter MD – Venus AD:</b> Venus is 10th &amp; 3rd lord for Leo. If Venus sits in 11th — strong gains, career boost, relationship/marriage matters.<br>
+<b>Jupiter MD – Saturn AD:</b> Saturn is 6th &amp; 7th lord. Mixed — health/work pressure plus marriage tension. Saturn slows; Jupiter expands. Net: hard work bears fruit slowly.<br>
+<b>Jupiter MD – Rahu AD:</b> If Rahu is in 10th with Jupiter → sudden career jump, possibly foreign-related. If Rahu is in 12th → expenses, foreign travel, isolation phase.<br><br>
+<b>Same MD theme, but each bhukti delivers a different chapter of it.</b>
+</div>
+
+<div class="example">
+<b>Example 3 — Conflict between MD and bhukti lord</b><br>
+Suppose Saturn is your 1st lord (self) and Mars is your 8th lord (sudden events).<br>
+In <b>Saturn MD – Mars AD</b>, the 1st lord's period gets overlaid with the 8th lord's bhukti.<br>
+→ Pressure on health, body, identity. Hard decisions, possible accidents or sudden lifestyle changes.<br>
+→ If Saturn and Mars are in 6/8 from each other in the chart, the difficulty is sharper. If they are in trine (1/5/9), the disruption is constructive — a forced reinvention.
+</div>
+
+<hr>
+
+<div class="note">
+<b>Reading order — five steps:</b>
+<ol>
+<li>What the planet <i>is</i> (Section 1).</li>
+<li>What house it <i>sits in</i> (Section 2).</li>
+<li>What houses it <i>owns</i> in this chart (Section 3, Step 2).</li>
+<li>Combine into one sentence (Section 3, Step 4).</li>
+<li>Run that sentence through the dasha–bhukti method (Section 4).</li>
+</ol>
+That's the whole engine of chart reading.
+</div>
+
+<p class="small" style="margin-top:30px;text-align:center">
+Reference notes — Parashari framework, Vimshottari dasha.<br>
+Use alongside an actual chart calculated with Lahiri ayanamsa for South Indian convention.
 </p>
-```
 
-  </div>
 </div>
-
-<!-- ══════════════════════════════ APP ══════ -->
-
-<div id="app">
-
-<!-- TOP NAV -->
-
-<nav class="topbar">
-  <a class="logo" href="#">
-    <div class="logo-icon">🗂</div>
-    <span>Project Studio <span style="color:var(--teal)">Pro</span></span>
-  </a>
-  <div class="nav-tabs">
-    <button class="nav-tab active" onclick="showPage('notes',this)">✏️ Add Note</button>
-    <button class="nav-tab" onclick="showPage('reports',this)">📊 Reports</button>
-    <button class="nav-tab" onclick="showPage('manage',this)">⚙️ Manage</button>
-  </div>
-  <div class="spacer"></div>
-  <div class="topbar-actions">
-    <div class="sync-status">
-      <div class="sync-dot" id="sync-dot"></div>
-      <span id="sync-label">Synced</span>
-    </div>
-    <button class="btn-icon" onclick="toggleTheme()" id="themeBtn" title="Toggle theme">🌙</button>
-    <button class="btn-primary" onclick="exportForAI()">📥 Export AI</button>
-    <div class="avatar-wrap">
-      <div class="avatar" id="user-avatar" onclick="toggleAvatarMenu()">PS</div>
-      <div class="avatar-menu" id="avatar-menu">
-        <div class="avatar-menu-name" id="avatar-name">
-          User<div class="avatar-menu-email" id="avatar-email"></div>
-        </div>
-        <div class="avatar-menu-item" onclick="toggleTheme()">🌙 Toggle Dark Mode</div>
-        <div class="avatar-menu-item danger" onclick="signOut()">🚪 Sign Out</div>
-      </div>
-    </div>
-  </div>
-</nav>
-
-<div class="layout">
-<!-- SIDEBAR -->
-<aside class="sidebar">
-  <div class="sidebar-section-label">Projects</div>
-  <button class="sidebar-item active" id="sb-all" onclick="filterSidebar('all',this)">
-    <span class="icon">📁</span> All Projects
-    <span class="count" id="count-all">0</span>
-  </button>
-  <div id="sidebar-projects-list"></div>
-  <div class="sidebar-divider"></div>
-  <div class="sidebar-section-label">Views</div>
-  <button class="sidebar-item" onclick="showPage('reports',document.querySelectorAll('.nav-tab')[1])">
-    <span class="icon">📊</span> Reports
-  </button>
-  <button class="sidebar-item" onclick="showPage('manage',document.querySelectorAll('.nav-tab')[2])">
-    <span class="icon">⚙️</span> Manage
-  </button>
-  <div class="sidebar-divider"></div>
-  <div class="sidebar-footer">
-    <div class="sidebar-footer-label">🚀 Unlock Pro features</div>
-    <button class="upgrade-btn">Upgrade Plan</button>
-  </div>
-</aside>
-
-<main class="main">
-
-<!-- PAGE: ADD NOTE -->
-
-<div class="page active" id="page-notes">
-  <div class="page-header animate-in">
-    <div class="page-header-text">
-      <h1 class="page-title">Add Note</h1>
-      <p class="page-subtitle">Capture ideas, context, and updates linked to your project structure</p>
-    </div>
-  </div>
-  <div class="stats-row animate-in delay-1">
-    <div class="stat-card"><div class="stat-label">Total Notes</div><div class="stat-value indigo" id="stat-total">0</div></div>
-    <div class="stat-card"><div class="stat-label">Projects</div><div class="stat-value teal" id="stat-projects">0</div></div>
-    <div class="stat-card"><div class="stat-label">Branches</div><div class="stat-value amber" id="stat-branches">0</div></div>
-    <div class="stat-card"><div class="stat-label">Today</div><div class="stat-value" id="stat-today">0</div></div>
-  </div>
-  <div class="selector-strip animate-in delay-2">
-    <div class="field-group">
-      <label class="field-label">Project</label>
-      <select class="field-select" id="sel-project" onchange="onProjectChange()">
-        <option value="">— Select Project —</option>
-      </select>
-    </div>
-    <div class="field-group">
-      <label class="field-label">Branch</label>
-      <select class="field-select" id="sel-branch" onchange="onBranchChange()">
-        <option value="">— Select Branch —</option>
-      </select>
-    </div>
-    <div class="field-group">
-      <label class="field-label">Sub-Branch</label>
-      <select class="field-select" id="sel-subbranch">
-        <option value="">— Select Sub-Branch —</option>
-      </select>
-    </div>
-  </div>
-  <div class="note-editor-card animate-in delay-3">
-    <div class="note-editor-toolbar">
-      <button class="toolbar-btn" onclick="wrapText('**','**')"><b>B</b></button>
-      <button class="toolbar-btn" onclick="wrapText('_','_')"><i>I</i></button>
-      <button class="toolbar-btn" onclick="wrapText('`','`')">Code</button>
-      <div class="toolbar-sep"></div>
-      <button class="toolbar-btn" onclick="insertBullet()">• List</button>
-      <button class="toolbar-btn" onclick="insertDate()">📅 Date</button>
-      <div class="toolbar-sep"></div>
-      <span style="font-size:.8rem;color:var(--text3);margin-left:auto">Context / Note</span>
-    </div>
-    <textarea class="note-textarea" id="note-text" placeholder="Write your note, context, or observation here…" oninput="updateCharCount()"></textarea>
-    <div class="note-editor-footer">
-      <span class="char-count" id="char-count">0 characters</span>
-      <div class="save-actions">
-        <button class="btn-icon" onclick="clearNote()" title="Clear">🗑</button>
-        <button class="btn-primary" onclick="saveNote()">💾 Save Note</button>
-      </div>
-    </div>
-  </div>
-  <div class="sync-banner animate-in delay-4">
-    <div class="sync-banner-icon">🔄</div>
-    <div class="sync-banner-text">
-      <div class="sync-banner-title">Global Sync — Apply to All Branches</div>
-      <div class="sync-banner-sub">Push a context note across every branch in the selected project</div>
-    </div>
-    <div class="sync-banner-context">
-      <textarea class="sync-textarea" id="sync-text" placeholder="Enter a global context note…" rows="2"></textarea>
-    </div>
-    <button class="sync-btn" onclick="globalSync()">⚡ Apply to All</button>
-  </div>
-  <div class="notes-card animate-in delay-5">
-    <div class="notes-card-header">
-      <div class="notes-card-title">Saved Notes <span class="badge" id="table-count">0</span></div>
-      <input class="search-input" type="text" placeholder="🔍  Search notes…" oninput="searchNotes(this.value)" />
-    </div>
-    <div id="notes-table-wrap">
-      <div class="empty-state"><div class="empty-icon">📝</div><div class="empty-label">No notes yet</div><div class="empty-sub">Select a project and add your first note above</div></div>
-    </div>
-  </div>
-</div>
-
-<!-- PAGE: REPORTS -->
-
-<div class="page" id="page-reports">
-  <div class="page-header animate-in">
-    <div class="page-header-text"><h1 class="page-title">Reports</h1><p class="page-subtitle">Export and analyse your project notes</p></div>
-  </div>
-  <div class="export-bar animate-in delay-1">
-    <button class="export-btn" onclick="exportForAI()">📥 Export for AI Analysis</button>
-    <button class="export-btn" onclick="exportJSON()">{ } Export JSON</button>
-    <button class="export-btn" onclick="exportCSV()">📄 Export CSV</button>
-    <button class="export-btn" onclick="exportMarkdown()">Ⓜ Export Markdown</button>
-  </div>
-  <div class="notes-card animate-in delay-2">
-    <div class="notes-card-header">
-      <div class="notes-card-title">All Notes — Full View <span class="badge" id="report-count">0</span></div>
-    </div>
-    <div id="report-table-wrap"><div class="empty-state"><div class="empty-icon">📊</div><div class="empty-label">No notes to report yet</div></div></div>
-  </div>
-</div>
-
-<!-- PAGE: MANAGE -->
-
-<div class="page" id="page-manage">
-  <div class="page-header animate-in">
-    <div class="page-header-text"><h1 class="page-title">Manage Structure</h1><p class="page-subtitle">Create and organize your projects, branches, and sub-branches</p></div>
-  </div>
-  <div class="manage-grid">
-    <div class="manage-card animate-in delay-1">
-      <div class="manage-card-header">
-        <div class="manage-card-icon ic-indigo">📁</div>
-        <div><div class="manage-card-title">Projects</div><div class="manage-card-subtitle">Top-level containers</div></div>
-      </div>
-      <div class="manage-card-body">
-        <div class="list-items" id="mgmt-projects"></div>
-        <div class="add-item-row">
-          <input class="add-input" type="text" id="new-project-input" placeholder="New project name…" onkeydown="if(event.key==='Enter')addProject()" />
-          <button class="add-btn btn-primary" onclick="addProject()">Add</button>
-        </div>
-      </div>
-    </div>
-    <div class="manage-card animate-in delay-2">
-      <div class="manage-card-header">
-        <div class="manage-card-icon ic-teal">🌿</div>
-        <div><div class="manage-card-title">Branches</div><div class="manage-card-subtitle">Sections within a project</div></div>
-      </div>
-      <div class="manage-card-body">
-        <div class="field-group" style="margin-bottom:.75rem">
-          <label class="field-label">Under Project</label>
-          <select class="field-select" id="mgmt-project-sel" onchange="renderMgmtBranches()">
-            <option value="">— Select Project —</option>
-          </select>
-        </div>
-        <div class="list-items" id="mgmt-branches"></div>
-        <div class="add-item-row">
-          <input class="add-input" type="text" id="new-branch-input" placeholder="New branch name…" onkeydown="if(event.key==='Enter')addBranch()" />
-          <button class="add-btn btn-primary" onclick="addBranch()">Add</button>
-        </div>
-      </div>
-    </div>
-    <div class="manage-card animate-in delay-3">
-      <div class="manage-card-header">
-        <div class="manage-card-icon ic-amber">🔖</div>
-        <div><div class="manage-card-title">Sub-Branches</div><div class="manage-card-subtitle">Granular topics within a branch</div></div>
-      </div>
-      <div class="manage-card-body">
-        <div class="field-group" style="margin-bottom:.6rem">
-          <label class="field-label">Under Project</label>
-          <select class="field-select" id="mgmt-sub-project-sel" onchange="renderMgmtSubBranchProjectChange()">
-            <option value="">— Select Project —</option>
-          </select>
-        </div>
-        <div class="field-group" style="margin-bottom:.75rem">
-          <label class="field-label">Under Branch</label>
-          <select class="field-select" id="mgmt-sub-branch-sel" onchange="renderMgmtSubBranches()">
-            <option value="">— Select Branch —</option>
-          </select>
-        </div>
-        <div class="list-items" id="mgmt-subbranches"></div>
-        <div class="add-item-row">
-          <input class="add-input" type="text" id="new-subbranch-input" placeholder="New sub-branch name…" onkeydown="if(event.key==='Enter')addSubBranch()" />
-          <button class="add-btn btn-primary" onclick="addSubBranch()">Add</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="notes-card animate-in delay-4">
-    <div class="notes-card-header"><div class="notes-card-title">🗂 Structure Hierarchy</div></div>
-    <div id="hierarchy-view" style="padding:1.25rem">
-      <div class="empty-state"><div class="empty-icon">🌳</div><div class="empty-label">No structure yet</div><div class="empty-sub">Add projects above to get started</div></div>
-    </div>
-  </div>
-</div>
-
-</main>
-</div>
-</div><!-- end #app -->
-
-<div class="toast" id="toast"></div>
-
-<!-- ════════════════════════════════════════════════════════
-  JAVASCRIPT
-════════════════════════════════════════════════════════ -->
-
-<script>
-// ═══════════════════════════════════════════════════════════
-//  🔥 FIREBASE CONFIG
-//  ⚠️  REPLACE the values below with YOUR project's config
-//  Get it from: Firebase Console → Your Project → Project Settings → Your Apps
-// ═══════════════════════════════════════════════════════════
-const firebaseConfig = {
-  apiKey:            "YOUR_API_KEY",
-  authDomain:        "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId:         "YOUR_PROJECT_ID",
-  storageBucket:     "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId:             "YOUR_APP_ID"
-};
-
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db   = firebase.firestore();
-
-// ═══════════════════════════════════════════════════════════
-//  STATE
-// ═══════════════════════════════════════════════════════════
-let currentUser = null;
-let state = { projects: [], notes: [], theme: 'light' };
-let searchQuery = '';
-let authMode = 'signin'; // 'signin' | 'signup'
-
-// Firestore refs (set after login)
-let projectsRef, notesRef;
-
-// ═══════════════════════════════════════════════════════════
-//  HELPERS
-// ═══════════════════════════════════════════════════════════
-function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
-function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
-function toast(msg, type=''){
-  const t=document.getElementById('toast');
-  t.textContent=(type==='success'?'✅ ':type==='error'?'❌ ':'ℹ️ ')+msg;
-  t.className='toast show'+(type?' '+type:'');
-  setTimeout(()=>t.className='toast',2800);
-}
-
-function setSyncStatus(status){
-  const dot=document.getElementById('sync-dot');
-  const label=document.getElementById('sync-label');
-  if(status==='saving'){ dot.className='sync-dot saving'; label.textContent='Saving…'; }
-  else if(status==='error'){ dot.className='sync-dot error'; label.textContent='Error'; }
-  else { dot.className='sync-dot'; label.textContent='Synced'; }
-}
-
-// ═══════════════════════════════════════════════════════════
-//  AUTH
-// ═══════════════════════════════════════════════════════════
-function toggleAuthMode(){
-  authMode = authMode==='signin'?'signup':'signin';
-  const btn=document.getElementById('auth-main-btn');
-  const sw=document.getElementById('auth-switch-text');
-  if(authMode==='signup'){
-    btn.textContent='Create Account';
-    btn.onclick=signUpEmail;
-    sw.innerHTML='Already have an account? <a onclick="toggleAuthMode()">Sign In</a>';
-  } else {
-    btn.textContent='Sign In';
-    btn.onclick=signInEmail;
-    sw.innerHTML='Don\'t have an account? <a onclick="toggleAuthMode()">Sign Up</a>';
-  }
-  document.getElementById('auth-error').style.display='none';
-}
-
-function showAuthError(msg){
-  const el=document.getElementById('auth-error');
-  el.textContent=msg; el.style.display='block';
-}
-
-async function signInGoogle(){
-  try {
-    const provider=new firebase.auth.GoogleAuthProvider();
-    await auth.signInWithPopup(provider);
-  } catch(e){ showAuthError(e.message); }
-}
-
-async function signInEmail(){
-  const email=document.getElementById('auth-email').value.trim();
-  const pass=document.getElementById('auth-password').value;
-  if(!email||!pass){ showAuthError('Please enter email and password.'); return; }
-  try {
-    await auth.signInWithEmailAndPassword(email,pass);
-  } catch(e){ showAuthError(e.message); }
-}
-
-async function signUpEmail(){
-  const email=document.getElementById('auth-email').value.trim();
-  const pass=document.getElementById('auth-password').value;
-  if(!email||!pass){ showAuthError('Please enter email and password.'); return; }
-  if(pass.length<6){ showAuthError('Password must be at least 6 characters.'); return; }
-  try {
-    await auth.createUserWithEmailAndPassword(email,pass);
-  } catch(e){ showAuthError(e.message); }
-}
-
-async function signOut(){
-  await auth.signOut();
-  document.getElementById('avatar-menu').classList.remove('open');
-}
-
-function toggleAvatarMenu(){
-  document.getElementById('avatar-menu').classList.toggle('open');
-}
-document.addEventListener('click', e=>{
-  if(!e.target.closest('.avatar-wrap')) document.getElementById('avatar-menu').classList.remove('open');
-});
-
-// ═══════════════════════════════════════════════════════════
-//  AUTH STATE LISTENER — main entry point
-// ═══════════════════════════════════════════════════════════
-auth.onAuthStateChanged(async user => {
-  document.getElementById('loading-screen').style.display='none';
-  if(user){
-    currentUser=user;
-    // Set Firestore refs scoped to this user
-    projectsRef = db.collection('users').doc(user.uid).collection('projects');
-    notesRef    = db.collection('users').doc(user.uid).collection('notes');
-    // Show app
-    document.getElementById('auth-screen').style.display='none';
-    document.getElementById('app').style.display='block';
-    // Update avatar
-    const initials=(user.displayName||user.email||'U').slice(0,2).toUpperCase();
-    document.getElementById('user-avatar').textContent=initials;
-    document.getElementById('avatar-name').innerHTML=
-      (user.displayName||'User')+'<div class="avatar-menu-email">'+user.email+'</div>';
-    // Load theme from localStorage
-    const savedTheme=localStorage.getItem('psp_theme')||'light';
-    state.theme=savedTheme;
-    if(savedTheme==='dark'){
-      document.documentElement.setAttribute('data-theme','dark');
-      document.getElementById('themeBtn').textContent='☀️';
-    }
-    // Load data from Firestore
-    await loadFromFirestore();
-  } else {
-    currentUser=null;
-    document.getElementById('auth-screen').style.display='flex';
-    document.getElementById('app').style.display='none';
-  }
-});
-
-// ═══════════════════════════════════════════════════════════
-//  FIRESTORE — LOAD
-// ═══════════════════════════════════════════════════════════
-async function loadFromFirestore(){
-  try {
-    const [projSnap, notesSnap] = await Promise.all([
-      projectsRef.orderBy('createdAt','asc').get(),
-      notesRef.orderBy('createdAt','desc').get()
-    ]);
-    state.projects = projSnap.docs.map(d=>({id:d.id,...d.data()}));
-    state.notes    = notesSnap.docs.map(d=>({id:d.id,...d.data()}));
-    populateProjectSelects();
-    renderNotesTable();
-    updateStats();
-    setSyncStatus('synced');
-  } catch(e){
-    console.error(e);
-    toast('Could not load data: '+e.message,'error');
-    setSyncStatus('error');
-  }
-}
-
-// ═══════════════════════════════════════════════════════════
-//  FIRESTORE — SAVE HELPERS
-// ═══════════════════════════════════════════════════════════
-async function fbSaveProject(proj){
-  setSyncStatus('saving');
-  try {
-    const {id,...data}=proj;
-    await projectsRef.doc(id).set({...data, createdAt: firebase.firestore.FieldValue.serverTimestamp()});
-    setSyncStatus('synced');
-  } catch(e){ setSyncStatus('error'); toast('Save failed: '+e.message,'error'); }
-}
-
-async function fbDeleteProject(id){
-  setSyncStatus('saving');
-  try {
-    await projectsRef.doc(id).delete();
-    setSyncStatus('synced');
-  } catch(e){ setSyncStatus('error'); }
-}
-
-async function fbSaveNote(note){
-  setSyncStatus('saving');
-  try {
-    const {id,...data}=note;
-    await notesRef.doc(id).set({...data, createdAt: firebase.firestore.FieldValue.serverTimestamp()});
-    setSyncStatus('synced');
-  } catch(e){ setSyncStatus('error'); toast('Save failed: '+e.message,'error'); }
-}
-
-async function fbDeleteNote(id){
-  setSyncStatus('saving');
-  try {
-    await notesRef.doc(id).delete();
-    setSyncStatus('synced');
-  } catch(e){ setSyncStatus('error'); }
-}
-
-// ═══════════════════════════════════════════════════════════
-//  UI HELPERS
-// ═══════════════════════════════════════════════════════════
-function showPage(id, btn){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-  if(id==='reports') renderReportTable();
-  if(id==='manage'){ syncManageSelects(); renderMgmtProjects(); renderHierarchy(); }
-}
-
-function toggleTheme(){
-  state.theme=state.theme==='light'?'dark':'light';
-  document.documentElement.setAttribute('data-theme',state.theme==='dark'?'dark':'');
-  document.getElementById('themeBtn').textContent=state.theme==='dark'?'☀️':'🌙';
-  localStorage.setItem('psp_theme',state.theme);
-}
-
-// ═══════════════════════════════════════════════════════════
-//  SELECTORS
-// ═══════════════════════════════════════════════════════════
-function populateProjectSelects(){
-  ['sel-project','mgmt-project-sel','mgmt-sub-project-sel'].forEach(id=>{
-    const el=document.getElementById(id);
-    const val=el.value;
-    el.innerHTML='<option value="">— Select Project —</option>';
-    state.projects.forEach(p=>el.appendChild(new Option(p.name,p.id)));
-    el.value=val;
-  });
-}
-
-function onProjectChange(){
-  populateBranchSelect('sel-project','sel-branch');
-  document.getElementById('sel-subbranch').innerHTML='<option value="">— Select Sub-Branch —</option>';
-}
-function onBranchChange(){ populateSubBranchSelect('sel-project','sel-branch','sel-subbranch'); }
-
-function populateBranchSelect(projSel,branchSel){
-  const proj=state.projects.find(p=>p.id===document.getElementById(projSel).value);
-  const el=document.getElementById(branchSel);
-  el.innerHTML='<option value="">— Select Branch —</option>';
-  if(proj) proj.branches.forEach(b=>el.appendChild(new Option(b.name,b.id)));
-}
-
-function populateSubBranchSelect(projSel,branchSel,subSel){
-  const proj=state.projects.find(p=>p.id===document.getElementById(projSel).value);
-  const branch=proj&&proj.branches.find(b=>b.id===document.getElementById(branchSel).value);
-  const el=document.getElementById(subSel);
-  el.innerHTML='<option value="">— Select Sub-Branch —</option>';
-  if(branch) branch.subBranches.forEach(s=>el.appendChild(new Option(s.name,s.id)));
-}
-
-// ═══════════════════════════════════════════════════════════
-//  NOTES
-// ═══════════════════════════════════════════════════════════
-async function saveNote(){
-  const projId=document.getElementById('sel-project').value;
-  const branchId=document.getElementById('sel-branch').value;
-  const subId=document.getElementById('sel-subbranch').value;
-  const text=document.getElementById('note-text').value.trim();
-  if(!projId){ toast('Please select a project first.'); return; }
-  if(!text)  { toast('Note is empty!'); return; }
-  const proj=state.projects.find(p=>p.id===projId);
-  const branch=proj&&proj.branches.find(b=>b.id===branchId);
-  const sub=branch&&branch.subBranches.find(s=>s.id===subId);
-  const note={
-    id:uid(), projectId:projId, project:proj?proj.name:'',
-    branchId, branch:branch?branch.name:'',
-    subBranchId:subId, subBranch:sub?sub.name:'',
-    text,
-    date:new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})
-  };
-  state.notes.unshift(note);
-  clearNote(); renderNotesTable(); updateStats();
-  toast('Note saved!','success');
-  await fbSaveNote(note);
-}
-
-function clearNote(){ document.getElementById('note-text').value=''; updateCharCount(); }
-function updateCharCount(){
-  const n=document.getElementById('note-text').value.length;
-  document.getElementById('char-count').textContent=n+' character'+(n!==1?'s':'');
-}
-
-function wrapText(pre,post){
-  const ta=document.getElementById('note-text');
-  const s=ta.selectionStart,e=ta.selectionEnd,val=ta.value;
-  ta.value=val.slice(0,s)+pre+val.slice(s,e)+post+val.slice(e);
-  ta.focus(); ta.selectionStart=s+pre.length; ta.selectionEnd=e+pre.length; updateCharCount();
-}
-function insertBullet(){
-  const ta=document.getElementById('note-text'),s=ta.selectionStart;
-  ta.value=ta.value.slice(0,s)+'\n• '+ta.value.slice(s);
-  ta.focus(); ta.selectionStart=ta.selectionEnd=s+3; updateCharCount();
-}
-function insertDate(){
-  const ta=document.getElementById('note-text'),s=ta.selectionStart;
-  const d=new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
-  ta.value=ta.value.slice(0,s)+d+' '+ta.value.slice(s);
-  ta.focus(); updateCharCount();
-}
-
-async function globalSync(){
-  const projId=document.getElementById('sel-project').value;
-  const text=document.getElementById('sync-text').value.trim();
-  if(!projId){ toast('Select a project first.'); return; }
-  if(!text)  { toast('Enter a sync note.'); return; }
-  const proj=state.projects.find(p=>p.id===projId);
-  if(!proj)  { toast('Project not found.'); return; }
-  const date=new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
-  const newNotes=[];
-  proj.branches.forEach(b=>{
-    const note={id:uid(),projectId:projId,project:proj.name,branchId:b.id,branch:b.name,subBranchId:'',subBranch:'',text,date};
-    state.notes.unshift(note); newNotes.push(note);
-  });
-  document.getElementById('sync-text').value='';
-  renderNotesTable(); updateStats();
-  toast('Applied to '+newNotes.length+' branch'+(newNotes.length!==1?'es':'')+'!','success');
-  await Promise.all(newNotes.map(n=>fbSaveNote(n)));
-}
-
-async function deleteNote(id){
-  state.notes=state.notes.filter(n=>n.id!==id);
-  renderNotesTable(); renderReportTable(); updateStats();
-  toast('Note deleted.');
-  await fbDeleteNote(id);
-}
-
-function searchNotes(q){ searchQuery=q.toLowerCase(); renderNotesTable(); }
-
-function renderNotesTable(notes){
-  const list=notes||state.notes.filter(n=>
-    !searchQuery||
-    n.text.toLowerCase().includes(searchQuery)||
-    n.project.toLowerCase().includes(searchQuery)||
-    n.branch.toLowerCase().includes(searchQuery)
-  );
-  const wrap=document.getElementById('notes-table-wrap');
-  document.getElementById('table-count').textContent=list.length;
-  if(!list.length){
-    wrap.innerHTML=`<div class="empty-state"><div class="empty-icon">📝</div><div class="empty-label">${searchQuery?'No matching notes':'No notes yet'}</div><div class="empty-sub">Add your first note above</div></div>`;
-    return;
-  }
-  wrap.innerHTML=`<table class="notes-table">
-    <thead><tr><th>Project</th><th>Branch</th><th>Sub-Branch</th><th>Date</th><th>Note</th><th>Actions</th></tr></thead>
-    <tbody>${list.map(n=>`<tr>
-      <td><span class="note-project-chip">📁 ${esc(n.project)}</span></td>
-      <td><span class="note-branch-chip">${esc(n.branch)||'—'}</span></td>
-      <td style="font-size:.82rem;color:var(--text3)">${esc(n.subBranch)||'—'}</td>
-      <td style="white-space:nowrap;font-size:.82rem">${esc(n.date)}</td>
-      <td class="note-text-cell" title="${esc(n.text)}">${esc(n.text)}</td>
-      <td><div class="note-actions">
-        <button class="note-btn" onclick="copyNote('${n.id}')">📋 Copy</button>
-        <button class="note-btn del" onclick="deleteNote('${n.id}')">🗑 Delete</button>
-      </div></td>
-    </tr>`).join('')}</tbody>
-  </table>`;
-}
-
-function copyNote(id){
-  const n=state.notes.find(n=>n.id===id);
-  if(!n) return;
-  navigator.clipboard.writeText(`[${n.project}${n.branch?' > '+n.branch:''}${n.subBranch?' > '+n.subBranch:''}] ${n.text}`);
-  toast('Copied!','success');
-}
-
-function renderReportTable(){
-  const list=state.notes;
-  const badge=document.getElementById('report-count');
-  if(badge) badge.textContent=list.length;
-  const wrap=document.getElementById('report-table-wrap');
-  if(!list.length){ wrap.innerHTML=`<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-label">No notes to report yet</div></div>`; return; }
-  wrap.innerHTML=`<table class="notes-table">
-    <thead><tr><th>Project</th><th>Branch</th><th>Sub-Branch</th><th>Date</th><th>Note</th></tr></thead>
-    <tbody>${list.map(n=>`<tr>
-      <td><span class="note-project-chip">📁 ${esc(n.project)}</span></td>
-      <td><span class="note-branch-chip">${esc(n.branch)||'—'}</span></td>
-      <td style="font-size:.82rem;color:var(--text3)">${esc(n.subBranch)||'—'}</td>
-      <td style="white-space:nowrap;font-size:.82rem">${esc(n.date)}</td>
-      <td>${esc(n.text)}</td>
-    </tr>`).join('')}</tbody>
-  </table>`;
-}
-
-// ═══════════════════════════════════════════════════════════
-//  STATS
-// ═══════════════════════════════════════════════════════════
-function updateStats(){
-  const today=new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
-  document.getElementById('stat-total').textContent=state.notes.length;
-  document.getElementById('stat-projects').textContent=state.projects.length;
-  document.getElementById('stat-branches').textContent=state.projects.reduce((a,p)=>a+p.branches.length,0);
-  document.getElementById('stat-today').textContent=state.notes.filter(n=>n.date===today).length;
-  document.getElementById('count-all').textContent=state.notes.length;
-  renderSidebarProjects();
-}
-
-function renderSidebarProjects(){
-  const wrap=document.getElementById('sidebar-projects-list');
-  wrap.innerHTML=state.projects.map(p=>{
-    const cnt=state.notes.filter(n=>n.projectId===p.id).length;
-    return `<button class="sidebar-item" onclick="filterSidebar('${p.id}',this)">
-      <span class="icon">📂</span>${esc(p.name)}
-      <span class="count">${cnt}</span>
-    </button>`;
-  }).join('');
-}
-
-function filterSidebar(id,btn){
-  document.querySelectorAll('.sidebar-item').forEach(b=>b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-  const filtered=id==='all'?state.notes:state.notes.filter(n=>n.projectId===id);
-  renderNotesTable(filtered);
-}
-
-// ═══════════════════════════════════════════════════════════
-//  MANAGE PROJECTS
-// ═══════════════════════════════════════════════════════════
-function syncManageSelects(){ populateProjectSelects(); renderMgmtBranches(); }
-
-async function addProject(){
-  const inp=document.getElementById('new-project-input');
-  const name=inp.value.trim();
-  if(!name){ toast('Enter a project name.'); return; }
-  if(state.projects.find(p=>p.name.toLowerCase()===name.toLowerCase())){ toast('Project already exists.'); return; }
-  const proj={id:uid(),name,branches:[]};
-  state.projects.push(proj); inp.value='';
-  populateProjectSelects(); renderMgmtProjects(); renderHierarchy(); updateStats();
-  toast('Project added!','success');
-  await fbSaveProject(proj);
-}
-
-async function deleteProject(id){
-  if(!confirm('Delete this project and all its data?')) return;
-  state.projects=state.projects.filter(p=>p.id!==id);
-  state.notes=state.notes.filter(n=>n.projectId!==id);
-  populateProjectSelects(); renderMgmtProjects(); renderHierarchy(); renderNotesTable(); updateStats();
-  toast('Project deleted.');
-  await fbDeleteProject(id);
-  // also delete all notes for this project from Firestore
-  const snap=await notesRef.where('projectId','==',id).get();
-  await Promise.all(snap.docs.map(d=>d.ref.delete()));
-}
-
-function renderMgmtProjects(){
-  const wrap=document.getElementById('mgmt-projects');
-  if(!state.projects.length){ wrap.innerHTML='<div style="color:var(--text3);font-size:.85rem;padding:.5rem">No projects yet</div>'; return; }
-  wrap.innerHTML=state.projects.map(p=>`
-    <div class="list-item">
-      <div class="list-item-dot dot-indigo"></div>
-      <div class="list-item-text">${esc(p.name)}</div>
-      <div class="list-item-actions">
-        <button class="item-action-btn del" onclick="deleteProject('${p.id}')" title="Delete">🗑</button>
-      </div>
-    </div>`).join('');
-}
-
-async function addBranch(){
-  const projId=document.getElementById('mgmt-project-sel').value;
-  const name=document.getElementById('new-branch-input').value.trim();
-  if(!projId){ toast('Select a project first.'); return; }
-  if(!name)  { toast('Enter a branch name.'); return; }
-  const proj=state.projects.find(p=>p.id===projId);
-  if(proj.branches.find(b=>b.name.toLowerCase()===name.toLowerCase())){ toast('Branch already exists.'); return; }
-  proj.branches.push({id:uid(),name,subBranches:[]});
-  document.getElementById('new-branch-input').value='';
-  renderMgmtBranches(); renderHierarchy(); updateStats();
-  toast('Branch added!','success');
-  await fbSaveProject(proj);
-}
-
-async function deleteBranch(projId,branchId){
-  const proj=state.projects.find(p=>p.id===projId);
-  if(!proj) return;
-  proj.branches=proj.branches.filter(b=>b.id!==branchId);
-  state.notes=state.notes.filter(n=>!(n.projectId===projId&&n.branchId===branchId));
-  renderMgmtBranches(); renderHierarchy(); renderNotesTable(); updateStats();
-  toast('Branch deleted.');
-  await fbSaveProject(proj);
-  const snap=await notesRef.where('branchId','==',branchId).get();
-  await Promise.all(snap.docs.map(d=>d.ref.delete()));
-}
-
-function renderMgmtBranches(){
-  const projId=document.getElementById('mgmt-project-sel').value;
-  const wrap=document.getElementById('mgmt-branches');
-  if(!projId){ wrap.innerHTML=''; return; }
-  const proj=state.projects.find(p=>p.id===projId);
-  if(!proj||!proj.branches.length){ wrap.innerHTML='<div style="color:var(--text3);font-size:.85rem;padding:.5rem">No branches yet</div>'; return; }
-  wrap.innerHTML=proj.branches.map(b=>`
-    <div class="list-item">
-      <div class="list-item-dot dot-teal"></div>
-      <div class="list-item-text">${esc(b.name)}</div>
-      <div class="list-item-actions">
-        <button class="item-action-btn del" onclick="deleteBranch('${projId}','${b.id}')" title="Delete">🗑</button>
-      </div>
-    </div>`).join('');
-}
-
-function renderMgmtSubBranchProjectChange(){
-  const projId=document.getElementById('mgmt-sub-project-sel').value;
-  const branchSel=document.getElementById('mgmt-sub-branch-sel');
-  branchSel.innerHTML='<option value="">— Select Branch —</option>';
-  const proj=state.projects.find(p=>p.id===projId);
-  if(proj) proj.branches.forEach(b=>branchSel.appendChild(new Option(b.name,b.id)));
-  renderMgmtSubBranches();
-}
-
-async function addSubBranch(){
-  const projId=document.getElementById('mgmt-sub-project-sel').value;
-  const branchId=document.getElementById('mgmt-sub-branch-sel').value;
-  const name=document.getElementById('new-subbranch-input').value.trim();
-  if(!projId||!branchId){ toast('Select a project and branch first.'); return; }
-  if(!name){ toast('Enter a sub-branch name.'); return; }
-  const proj=state.projects.find(p=>p.id===projId);
-  const branch=proj&&proj.branches.find(b=>b.id===branchId);
-  if(!branch) return;
-  if(branch.subBranches.find(s=>s.name.toLowerCase()===name.toLowerCase())){ toast('Sub-branch already exists.'); return; }
-  branch.subBranches.push({id:uid(),name});
-  document.getElementById('new-subbranch-input').value='';
-  renderMgmtSubBranches(); renderHierarchy();
-  toast('Sub-branch added!','success');
-  await fbSaveProject(proj);
-}
-
-async function deleteSubBranch(projId,branchId,subId){
-  const proj=state.projects.find(p=>p.id===projId);
-  const branch=proj&&proj.branches.find(b=>b.id===branchId);
-  if(!branch) return;
-  branch.subBranches=branch.subBranches.filter(s=>s.id!==subId);
-  state.notes=state.notes.filter(n=>!(n.projectId===projId&&n.branchId===branchId&&n.subBranchId===subId));
-  renderMgmtSubBranches(); renderHierarchy(); renderNotesTable();
-  toast('Sub-branch deleted.');
-  await fbSaveProject(proj);
-}
-
-function renderMgmtSubBranches(){
-  const projId=document.getElementById('mgmt-sub-project-sel').value;
-  const branchId=document.getElementById('mgmt-sub-branch-sel').value;
-  const wrap=document.getElementById('mgmt-subbranches');
-  if(!projId||!branchId){ wrap.innerHTML=''; return; }
-  const proj=state.projects.find(p=>p.id===projId);
-  const branch=proj&&proj.branches.find(b=>b.id===branchId);
-  if(!branch||!branch.subBranches.length){ wrap.innerHTML='<div style="color:var(--text3);font-size:.85rem;padding:.5rem">No sub-branches yet</div>'; return; }
-  wrap.innerHTML=branch.subBranches.map(s=>`
-    <div class="list-item">
-      <div class="list-item-dot dot-amber"></div>
-      <div class="list-item-text">${esc(s.name)}</div>
-      <div class="list-item-actions">
-        <button class="item-action-btn del" onclick="deleteSubBranch('${projId}','${branchId}','${s.id}')" title="Delete">🗑</button>
-      </div>
-    </div>`).join('');
-}
-
-function renderHierarchy(){
-  const wrap=document.getElementById('hierarchy-view');
-  if(!state.projects.length){ wrap.innerHTML=`<div class="empty-state"><div class="empty-icon">🌳</div><div class="empty-label">No structure yet</div></div>`; return; }
-  wrap.innerHTML=state.projects.map(p=>`
-    <div style="margin-bottom:1rem">
-      <div style="display:flex;align-items:center;gap:.5rem;font-weight:700;font-family:'Sora',sans-serif;font-size:.95rem;color:var(--indigo)">
-        📁 ${esc(p.name)} <span class="badge">${p.branches.length} branch${p.branches.length!==1?'es':''}</span>
-      </div>
-      ${p.branches.map(b=>`
-        <div style="margin-left:1.5rem;margin-top:.4rem">
-          <div style="font-weight:600;font-size:.88rem;color:var(--teal)">🌿 ${esc(b.name)}</div>
-          ${b.subBranches.map(s=>`<div style="margin-left:1.5rem;font-size:.83rem;color:var(--text2);padding:.2rem 0">🔖 ${esc(s.name)}</div>`).join('')}
-        </div>`).join('')}
-    </div>`).join('');
-}
-
-// ═══════════════════════════════════════════════════════════
-//  EXPORTS
-// ═══════════════════════════════════════════════════════════
-function exportForAI(){
-  if(!state.notes.length){ toast('No notes to export.'); return; }
-  let out='# Project Studio Pro — AI Analysis Export\n';
-  out+=`Generated: ${new Date().toLocaleString('en-IN')}\nUser: ${currentUser.email}\n\n`;
-  state.projects.forEach(proj=>{
-    const notes=state.notes.filter(n=>n.projectId===proj.id);
-    if(!notes.length) return;
-    out+=`## Project: ${proj.name}\n\n`;
-    proj.branches.forEach(br=>{
-      const bNotes=notes.filter(n=>n.branchId===br.id);
-      if(!bNotes.length) return;
-      out+=`### Branch: ${br.name}\n`;
-      bNotes.forEach(n=>out+=`- [${n.date}] ${n.text}\n`);
-      out+='\n';
-    });
-    const unlinked=notes.filter(n=>!n.branchId);
-    if(unlinked.length){ out+=`### General\n`; unlinked.forEach(n=>out+=`- [${n.date}] ${n.text}\n`); out+='\n'; }
-  });
-  downloadFile('project-notes-ai.md',out,'text/markdown');
-  toast('Exported for AI!','success');
-}
-function exportJSON(){ downloadFile('project-notes.json',JSON.stringify({projects:state.projects,notes:state.notes},null,2),'application/json'); toast('JSON exported!','success'); }
-function exportCSV(){
-  const rows=[['Project','Branch','Sub-Branch','Date','Note']];
-  state.notes.forEach(n=>rows.push([n.project,n.branch||'',n.subBranch||'',n.date,'"'+n.text.replace(/"/g,'""')+'"']));
-  downloadFile('project-notes.csv',rows.map(r=>r.join(',')).join('\n'),'text/csv');
-  toast('CSV exported!','success');
-}
-function exportMarkdown(){
-  let md='# Project Notes\n\n';
-  state.notes.forEach(n=>md+=`**[${n.date}]** ${n.project}${n.branch?' > '+n.branch:''}${n.subBranch?' > '+n.subBranch:''}\n${n.text}\n\n`);
-  downloadFile('project-notes.md',md,'text/markdown');
-  toast('Markdown exported!','success');
-}
-function downloadFile(name,content,type){
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([content],{type}));
-  a.download=name; a.click();
-}
-</script>
-
 </body>
 </html>
